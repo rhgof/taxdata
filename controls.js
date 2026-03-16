@@ -242,6 +242,11 @@ TaxChart.buildSidePanel = function() {
     var filterRow = document.createElement('div');
     filterRow.className = 'taxchart-filter-row';
 
+    var filterLabel = document.createElement('span');
+    filterLabel.className = 'taxchart-label';
+    filterLabel.textContent = 'Sector:';
+    filterRow.appendChild(filterLabel);
+
     var sectorFilter = document.createElement('select');
     sectorFilter.className = 'taxchart-select';
     var allOpt = document.createElement('option');
@@ -258,34 +263,12 @@ TaxChart.buildSidePanel = function() {
 
     sectorFilter.addEventListener('change', function() {
       TaxChart._sectorFilter = this.value;
+      TaxChart.state.highlightSector = this.value || null;
       TaxChart.updateCheckboxList();
+      TaxChart.applyHighlight();
     });
 
     filterRow.appendChild(sectorFilter);
-
-    var hlLabel = document.createElement('span');
-    hlLabel.className = 'taxchart-label';
-    hlLabel.textContent = 'Highlight:';
-    var hlSelect = document.createElement('select');
-    hlSelect.className = 'taxchart-select';
-    var noneOpt = document.createElement('option');
-    noneOpt.value = '';
-    noneOpt.textContent = 'None';
-    hlSelect.appendChild(noneOpt);
-    TaxChart.state.metadata.sectors.forEach(function(s) {
-      var opt = document.createElement('option');
-      opt.value = s;
-      opt.textContent = s;
-      if (TaxChart.state.highlightSector === s) opt.selected = true;
-      hlSelect.appendChild(opt);
-    });
-    hlSelect.addEventListener('change', function() {
-      TaxChart.state.highlightSector = this.value || null;
-      TaxChart.applyHighlight();
-    });
-    filterRow.appendChild(hlLabel);
-    filterRow.appendChild(hlSelect);
-
     panel.appendChild(filterRow);
   }
 
