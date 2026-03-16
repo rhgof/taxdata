@@ -90,7 +90,117 @@ TaxChart.renderApp = function() {
 };
 
 TaxChart.buildTopControls = function() {
-  TaxChart.elements.topBar.innerHTML = '<p>Controls will go here</p>';
+  var bar = TaxChart.elements.topBar;
+  bar.innerHTML = '';
+
+  // Chart mode selector
+  var modeGroup = document.createElement('div');
+  modeGroup.className = 'taxchart-control-group';
+  var modeLabel = document.createElement('span');
+  modeLabel.className = 'taxchart-label';
+  modeLabel.textContent = 'Chart:';
+  modeGroup.appendChild(modeLabel);
+
+  var modeNames = { scatter: 'Scatter', trails: 'Trails', bar: 'Bar', line: 'Line' };
+  TaxChart.MODES.forEach(function(mode) {
+    var btn = document.createElement('button');
+    btn.className = 'taxchart-mode-btn' + (TaxChart.state.mode === mode ? ' taxchart-active' : '');
+    btn.textContent = modeNames[mode];
+    btn.setAttribute('data-mode', mode);
+    btn.addEventListener('click', function() {
+      TaxChart.state.mode = mode;
+      TaxChart.buildTopControls();
+      TaxChart.updateChart();
+    });
+    modeGroup.appendChild(btn);
+  });
+  bar.appendChild(modeGroup);
+
+  // Axis pair / metric dropdown
+  var axisGroup = document.createElement('div');
+  axisGroup.className = 'taxchart-control-group';
+  var axisLabel = document.createElement('span');
+  axisLabel.className = 'taxchart-label';
+  var axisSelect = document.createElement('select');
+  axisSelect.className = 'taxchart-select';
+
+  var isScatterMode = TaxChart.state.mode === 'scatter' || TaxChart.state.mode === 'trails';
+  if (isScatterMode) {
+    axisLabel.textContent = 'Axes:';
+    TaxChart.AXIS_PAIRS.forEach(function(pair, i) {
+      var opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = pair.label;
+      opt.selected = (i === TaxChart.state.axisPairIndex);
+      axisSelect.appendChild(opt);
+    });
+    axisSelect.addEventListener('change', function() {
+      TaxChart.state.axisPairIndex = parseInt(this.value);
+      TaxChart.updateChart();
+    });
+  } else {
+    axisLabel.textContent = 'Metric:';
+    TaxChart.SINGLE_METRICS.forEach(function(metric, i) {
+      var opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = metric.label;
+      opt.selected = (i === TaxChart.state.metricIndex);
+      axisSelect.appendChild(opt);
+    });
+    axisSelect.addEventListener('change', function() {
+      TaxChart.state.metricIndex = parseInt(this.value);
+      TaxChart.updateChart();
+    });
+  }
+  axisGroup.appendChild(axisLabel);
+  axisGroup.appendChild(axisSelect);
+  bar.appendChild(axisGroup);
+
+  // Year slider
+  var showYear = TaxChart.state.mode === 'scatter' || TaxChart.state.mode === 'bar';
+  if (showYear) {
+    var yearGroup = document.createElement('div');
+    yearGroup.className = 'taxchart-control-group';
+    var yearLabel = document.createElement('span');
+    yearLabel.className = 'taxchart-label';
+    var years = TaxChart.state.metadata.years;
+    yearLabel.textContent = 'Year: ' + years[TaxChart.state.yearIndex];
+
+    var yearSlider = document.createElement('input');
+    yearSlider.type = 'range';
+    yearSlider.className = 'taxchart-slider';
+    yearSlider.min = 0;
+    yearSlider.max = years.length - 1;
+    yearSlider.value = TaxChart.state.yearIndex;
+    yearSlider.addEventListener('input', function() {
+      TaxChart.state.yearIndex = parseInt(this.value);
+      yearLabel.textContent = 'Year: ' + years[TaxChart.state.yearIndex];
+      TaxChart.updateChart();
+    });
+
+    yearGroup.appendChild(yearLabel);
+    yearGroup.appendChild(yearSlider);
+    bar.appendChild(yearGroup);
+  }
+
+  // Sort descending checkbox — bar mode only
+  if (TaxChart.state.mode === 'bar') {
+    var sortGroup = document.createElement('div');
+    sortGroup.className = 'taxchart-control-group';
+    var sortLabel = document.createElement('label');
+    sortLabel.className = 'taxchart-label';
+    var sortCheck = document.createElement('input');
+    sortCheck.type = 'checkbox';
+    sortCheck.checked = TaxChart.state.sortDescending;
+    sortCheck.addEventListener('change', function() {
+      TaxChart.state.sortDescending = this.checked;
+      TaxChart.updateChart();
+    });
+    sortLabel.appendChild(sortCheck);
+    sortLabel.appendChild(document.createTextNode(' Sort descending'));
+    sortGroup.appendChild(sortLabel);
+    bar.appendChild(sortGroup);
+  }
 };
 
 TaxChart.buildBottomPanel = function() {

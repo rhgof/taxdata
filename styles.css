@@ -4,3 +4,74 @@
   color: #333;
   max-width: 1200px;
 }
+
+.taxchart-top-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.taxchart-control-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.taxchart-label {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.taxchart-mode-btn {
+  padding: 4px 12px;
+  border: 1px solid #ccc;
+  background: #f5f5f5;
+  cursor: pointer;
+  font-size: 13px;
+  border-radius: 3px;
+}
+
+.taxchart-mode-btn.taxchart-active {
+  background: #1f77b4;
+  color: white;
+  border-color: #1f77b4;
+}
+
+.taxchart-mode-btn:hover:not(.taxchart-active) {
+  background: #e0e0e0;
+}
+
+.taxchart-select {
+  padding: 4px 8px;
+  font-size: 13px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+.taxchart-slider {
+  width: 120px;
+}
+
+.taxchart-error {
+  color: #d62728;
+  padding: 20px;
+}
+
+.taxchart-loading {
+  color: #666;
+  padding: 20px;
+}
+
+.taxchart-prompt {
+  color: #999;
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 16px;
+}
+
+.taxchart-chart-area {
+  min-height: 400px;
+}
