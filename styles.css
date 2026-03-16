@@ -3,6 +3,10 @@
   font-size: 14px;
   color: #333;
   max-width: 1200px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .taxchart-top-bar {
@@ -12,6 +16,7 @@
   gap: 16px;
   padding: 12px 0;
   border-bottom: 1px solid #e0e0e0;
+  flex-shrink: 0;
 }
 
 .taxchart-control-group {
@@ -75,12 +80,14 @@
 .taxchart-main-area {
   display: flex;
   gap: 16px;
+  flex: 1;
+  min-height: 0;
 }
 
 .taxchart-chart-area {
-  min-height: 400px;
   flex: 1;
   min-width: 0;
+  min-height: 0;
 }
 
 .taxchart-side-panel {
@@ -130,7 +137,7 @@
 
 .taxchart-list {
   flex: 1;
-  min-height: 200px;
+  min-height: 0;
   overflow-y: auto;
   border: 1px solid #e0e0e0;
   border-radius: 3px;
