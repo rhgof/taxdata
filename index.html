@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Corporate Tax Data Explorer</title>
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="tax-chart" class="taxchart" data-csv-url="test-data.csv"></div>
+
+  <script src="data.js"></script>
+  <script src="charts.js"></script>
+  <script src="controls.js"></script>
+  <script>TaxChart.init('#tax-chart');</script>
+</body>
+</html>
