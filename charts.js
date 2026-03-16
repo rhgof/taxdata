@@ -12,3 +12,8 @@ TaxChart.updateChart = function() {
 
   el.innerHTML = '<p>Chart will render here — ' + selected.length + ' items selected</p>';
 };
+
+TaxChart.applyHighlight = function() {
+  // Will be replaced with Plotly.restyle implementation in Task 7
+  TaxChart.updateChart();
+};

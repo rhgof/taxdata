@@ -75,3 +75,63 @@
 .taxchart-chart-area {
   min-height: 400px;
 }
+
+.taxchart-bottom-panel {
+  padding: 12px 0;
+  border-top: 1px solid #e0e0e0;
+}
+
+.taxchart-toggle-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.taxchart-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.taxchart-search-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.taxchart-search {
+  flex: 1;
+  padding: 6px 10px;
+  font-size: 13px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+.taxchart-list {
+  max-height: 240px;
+  overflow-y: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 3px;
+  padding: 4px;
+}
+
+.taxchart-list-item {
+  display: block;
+  padding: 3px 6px;
+  cursor: pointer;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.taxchart-list-item:hover {
+  background: #f0f0f0;
+}
+
+.taxchart-swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  vertical-align: middle;
+}
