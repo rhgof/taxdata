@@ -202,8 +202,9 @@ TaxChart.buildBarTraces = function() {
         color: TaxChart.getColor(item.name),
         opacity: TaxChart.getOpacity(item.name)
       },
-      text: [item.name + '<br>' + metric.label + ': ' + TaxChart.formatValue(item.value, metric.field)],
-      hoverinfo: 'text'
+      hovertext: [item.name + '<br>' + metric.label + ': ' + TaxChart.formatValue(item.value, metric.field)],
+      hoverinfo: 'text',
+      textposition: 'none'
     });
   });
 
@@ -256,8 +257,7 @@ TaxChart.buildLayout = function() {
   var mode = TaxChart.state.mode;
   var layout = {
     margin: { t: 30, r: 30, b: 50, l: 70 },
-    showlegend: true,
-    legend: { orientation: 'h', y: -0.15 },
+    showlegend: false,
     hovermode: 'closest'
   };
 
@@ -265,6 +265,8 @@ TaxChart.buildLayout = function() {
     var pair = TaxChart.AXIS_PAIRS[TaxChart.state.axisPairIndex];
     layout.xaxis = { title: pair.x };
     layout.yaxis = { title: pair.y };
+    if (pair.x === 'Tax Rate') layout.xaxis.tickformat = '.0%';
+    if (pair.y === 'Tax Rate') layout.yaxis.tickformat = '.0%';
   } else {
     var metric = TaxChart.SINGLE_METRICS[TaxChart.state.metricIndex];
     if (mode === 'bar') {
@@ -274,6 +276,7 @@ TaxChart.buildLayout = function() {
       layout.xaxis = { title: 'Financial Year' };
       layout.yaxis = { title: metric.label };
     }
+    if (metric.field === 'Tax Rate') layout.yaxis.tickformat = '.0%';
   }
 
   return layout;
@@ -327,10 +330,10 @@ TaxChart.handleDrillDown = function(eventData) {
   // Set sector filter BEFORE building the panel so the dropdown and list are in sync
   TaxChart._sectorFilter = sectorName;
   TaxChart._preserveSectorFilter = true;
-  TaxChart.buildBottomPanel();
+  TaxChart.buildSidePanel();
 
   // Now set the sector filter dropdown to match
-  var sectorDropdown = TaxChart.elements.bottomPanel.querySelector('.taxchart-select');
+  var sectorDropdown = TaxChart.elements.sidePanel.querySelector('.taxchart-select');
   if (sectorDropdown) sectorDropdown.value = sectorName;
   TaxChart.updateCheckboxList();
   TaxChart.updateChart();

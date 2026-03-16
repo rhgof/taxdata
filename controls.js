@@ -67,25 +67,30 @@ TaxChart.renderApp = function() {
   var topBar = document.createElement('div');
   topBar.className = 'taxchart-top-bar';
 
+  var mainArea = document.createElement('div');
+  mainArea.className = 'taxchart-main-area';
+
   var chartArea = document.createElement('div');
   chartArea.className = 'taxchart-chart-area';
   chartArea.id = 'taxchart-plot';
 
-  var bottomPanel = document.createElement('div');
-  bottomPanel.className = 'taxchart-bottom-panel';
+  var sidePanel = document.createElement('div');
+  sidePanel.className = 'taxchart-side-panel';
+
+  mainArea.appendChild(chartArea);
+  mainArea.appendChild(sidePanel);
 
   container.appendChild(topBar);
-  container.appendChild(chartArea);
-  container.appendChild(bottomPanel);
+  container.appendChild(mainArea);
 
   TaxChart.elements = {
     topBar: topBar,
     chartArea: chartArea,
-    bottomPanel: bottomPanel
+    sidePanel: sidePanel
   };
 
   TaxChart.buildTopControls();
-  TaxChart.buildBottomPanel();
+  TaxChart.buildSidePanel();
   TaxChart.updateChart();
 };
 
@@ -203,8 +208,8 @@ TaxChart.buildTopControls = function() {
   }
 };
 
-TaxChart.buildBottomPanel = function() {
-  var panel = TaxChart.elements.bottomPanel;
+TaxChart.buildSidePanel = function() {
+  var panel = TaxChart.elements.sidePanel;
   panel.innerHTML = '';
 
   var toggleRow = document.createElement('div');
@@ -219,7 +224,7 @@ TaxChart.buildBottomPanel = function() {
       TaxChart.state.viewBy = view;
       TaxChart.state.selected = {};
       TaxChart.state.highlightSector = null;
-      TaxChart.buildBottomPanel();
+      TaxChart.buildSidePanel();
       TaxChart.updateChart();
     });
     toggleRow.appendChild(btn);
@@ -288,6 +293,19 @@ TaxChart.buildBottomPanel = function() {
     TaxChart.updateCheckboxList();
   });
 
+  var selectAllBtn = document.createElement('button');
+  selectAllBtn.className = 'taxchart-mode-btn';
+  selectAllBtn.textContent = 'Select all';
+  selectAllBtn.addEventListener('click', function() {
+    // Select all currently visible (filtered) items
+    var visibleItems = TaxChart.getVisibleItems();
+    visibleItems.forEach(function(item) {
+      TaxChart.state.selected[item] = true;
+    });
+    TaxChart.updateCheckboxList();
+    TaxChart.updateChart();
+  });
+
   var clearBtn = document.createElement('button');
   clearBtn.className = 'taxchart-mode-btn';
   clearBtn.textContent = 'Clear all';
@@ -298,6 +316,7 @@ TaxChart.buildBottomPanel = function() {
   });
 
   searchRow.appendChild(searchInput);
+  searchRow.appendChild(selectAllBtn);
   searchRow.appendChild(clearBtn);
   panel.appendChild(searchRow);
 
@@ -315,21 +334,17 @@ TaxChart.buildBottomPanel = function() {
   TaxChart.updateCheckboxList();
 };
 
-TaxChart.updateCheckboxList = function() {
-  var listEl = document.getElementById('taxchart-list');
-  if (!listEl) return;
-  listEl.innerHTML = '';
-
+TaxChart.getVisibleItems = function() {
   var items;
   if (TaxChart.state.viewBy === 'companies') {
-    items = TaxChart.state.metadata.companies;
+    items = TaxChart.state.metadata.companies.slice();
     if (TaxChart._sectorFilter) {
       items = items.filter(function(c) {
         return TaxChart.state.metadata.companySectorMap[c] === TaxChart._sectorFilter;
       });
     }
   } else {
-    items = TaxChart.state.metadata.sectors;
+    items = TaxChart.state.metadata.sectors.slice();
   }
 
   if (TaxChart._searchTerm) {
@@ -338,6 +353,21 @@ TaxChart.updateCheckboxList = function() {
       return item.toLowerCase().indexOf(term) !== -1;
     });
   }
+  return items;
+};
+
+TaxChart.updateCheckboxList = function() {
+  var listEl = document.getElementById('taxchart-list');
+  if (!listEl) return;
+  listEl.innerHTML = '';
+
+  var items = TaxChart.getVisibleItems();
+
+  // Pin selected items to top
+  var selected = TaxChart.state.selected;
+  var selectedItems = items.filter(function(item) { return !!selected[item]; });
+  var unselectedItems = items.filter(function(item) { return !selected[item]; });
+  items = selectedItems.concat(unselectedItems);
 
   items.forEach(function(item) {
     var label = document.createElement('label');

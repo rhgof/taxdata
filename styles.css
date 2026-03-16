@@ -72,13 +72,23 @@
   font-size: 16px;
 }
 
-.taxchart-chart-area {
-  min-height: 400px;
+.taxchart-main-area {
+  display: flex;
+  gap: 16px;
 }
 
-.taxchart-bottom-panel {
-  padding: 12px 0;
-  border-top: 1px solid #e0e0e0;
+.taxchart-chart-area {
+  min-height: 400px;
+  flex: 1;
+  min-width: 0;
+}
+
+.taxchart-side-panel {
+  width: 280px;
+  flex-shrink: 0;
+  padding: 8px 0;
+  border-left: 1px solid #e0e0e0;
+  padding-left: 16px;
 }
 
 .taxchart-toggle-row {
@@ -140,6 +150,18 @@
   .taxchart-top-bar {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .taxchart-main-area {
+    flex-direction: column;
+  }
+
+  .taxchart-side-panel {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid #e0e0e0;
+    padding-left: 0;
+    padding-top: 12px;
   }
 
   .taxchart-filter-row {
