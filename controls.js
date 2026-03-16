@@ -1,5 +1,12 @@
 window.TaxChart = window.TaxChart || {};
 
+TaxChart.FIELD_LABELS = {
+  'Total Income': 'Revenue',
+  'Taxable Income': 'Taxable Income',
+  'Tax Payable': 'Tax Payable',
+  'Tax Rate': 'Tax Rate'
+};
+
 TaxChart.AXIS_PAIRS = [
   { label: 'Revenue vs Tax Payable', x: 'Total Income', y: 'Tax Payable' },
   { label: 'Revenue vs Taxable Income', x: 'Total Income', y: 'Taxable Income' },
@@ -382,6 +389,7 @@ TaxChart.updateCheckboxList = function() {
       } else {
         delete TaxChart.state.selected[item];
       }
+      TaxChart.updateCheckboxList();
       TaxChart.updateChart();
     });
 

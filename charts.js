@@ -256,21 +256,22 @@ TaxChart.buildLineTraces = function() {
 TaxChart.buildLayout = function() {
   var mode = TaxChart.state.mode;
   var layout = {
-    margin: { t: 30, r: 30, b: 50, l: 70 },
+    margin: { t: 30, r: 30, b: (mode === 'bar' ? 150 : 50), l: 70 },
     showlegend: false,
     hovermode: 'closest'
   };
 
   if (mode === 'scatter' || mode === 'trails') {
     var pair = TaxChart.AXIS_PAIRS[TaxChart.state.axisPairIndex];
-    layout.xaxis = { title: pair.x };
-    layout.yaxis = { title: pair.y };
+    var labels = TaxChart.FIELD_LABELS;
+    layout.xaxis = { title: labels[pair.x] || pair.x };
+    layout.yaxis = { title: labels[pair.y] || pair.y };
     if (pair.x === 'Tax Rate') layout.xaxis.tickformat = '.0%';
     if (pair.y === 'Tax Rate') layout.yaxis.tickformat = '.0%';
   } else {
     var metric = TaxChart.SINGLE_METRICS[TaxChart.state.metricIndex];
     if (mode === 'bar') {
-      layout.xaxis = { title: '', categoryorder: 'trace' };
+      layout.xaxis = { title: '', categoryorder: 'trace', tickangle: -45 };
       layout.yaxis = { title: metric.label };
     } else {
       layout.xaxis = { title: 'Financial Year' };
