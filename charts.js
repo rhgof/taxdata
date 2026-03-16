@@ -268,7 +268,7 @@ TaxChart.buildLayout = function() {
   } else {
     var metric = TaxChart.SINGLE_METRICS[TaxChart.state.metricIndex];
     if (mode === 'bar') {
-      layout.xaxis = { title: '' };
+      layout.xaxis = { title: '', categoryorder: 'trace' };
       layout.yaxis = { title: metric.label };
     } else {
       layout.xaxis = { title: 'Financial Year' };
@@ -326,6 +326,7 @@ TaxChart.handleDrillDown = function(eventData) {
 
   // Set sector filter BEFORE building the panel so the dropdown and list are in sync
   TaxChart._sectorFilter = sectorName;
+  TaxChart._preserveSectorFilter = true;
   TaxChart.buildBottomPanel();
 
   // Now set the sector filter dropdown to match

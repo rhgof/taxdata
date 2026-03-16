@@ -307,7 +307,11 @@ TaxChart.buildBottomPanel = function() {
   panel.appendChild(listContainer);
 
   TaxChart._searchTerm = '';
-  TaxChart._sectorFilter = '';
+  // Preserve _sectorFilter if set by drill-down; otherwise reset
+  if (!TaxChart._preserveSectorFilter) {
+    TaxChart._sectorFilter = '';
+  }
+  TaxChart._preserveSectorFilter = false;
   TaxChart.updateCheckboxList();
 };
 
