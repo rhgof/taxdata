@@ -1,0 +1,1862 @@
+[
+  {
+    "name": "BHP GROUP LIMITED",
+    "abn": "49004028077",
+    "income": 62528557496,
+    "taxable": 25591447528,
+    "tax_payable": 6007654291,
+    "year": "2023-24",
+    "sector": "Materials",
+    "source": "ASX"
+  },
+  {
+    "name": "COMMONWEALTH BANK OF AUSTRALIA",
+    "abn": "48123123124",
+    "income": 61492803786,
+    "taxable": 11616164513,
+    "tax_payable": 3434894484,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "ANZ GROUP HOLDINGS LIMITED",
+    "abn": "16659510791",
+    "income": 59563463573,
+    "taxable": 5788266275,
+    "tax_payable": 1669087258,
+    "year": "2023-24",
+    "sector": "Financials",
+    "source": "ASX"
+  },
+  {
+    "name": "WOOLWORTHS GROUP LIMITED",
+    "abn": "88000014675",
+    "income": 56596759405,
+    "taxable": 2702605198,
+    "tax_payable": 767268429,
+    "year": "2023-24",
+    "sector": "Consumer Staples",
+    "source": "ASX"
+  },
+  {
+    "name": "WESTPAC BANKING CORPORATION",
+    "abn": "33007457141",
+    "income": 53960825799,
+    "taxable": 8832484244,
+    "tax_payable": 2644577825,
+    "year": "2023-24",
+    "sector": "Financials",
+    "source": "ASX"
+  },
+  {
+    "name": "RIO TINTO LTD",
+    "abn": "96004458404",
+    "income": 52750986603,
+    "taxable": 22324213030,
+    "tax_payable": 6252268070,
+    "year": "2023-24",
+    "sector": "Materials",
+    "source": "ASX"
+  },
+  {
+    "name": "NATIONAL AUSTRALIA BANK LIMITED",
+    "abn": "12004044937",
+    "income": 52721911282,
+    "taxable": 7515488634,
+    "tax_payable": 2240631463,
+    "year": "2023-24",
+    "sector": "Financials",
+    "source": "ASX"
+  },
+  {
+    "name": "COLES GROUP LIMITED",
+    "abn": "11004089936",
+    "income": 48850510830,
+    "taxable": 1612724729,
+    "tax_payable": 467269569,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "WESFARMERS LIMITED",
+    "abn": "28008984049",
+    "income": 43149076148,
+    "taxable": 3318737080,
+    "tax_payable": 959744266,
+    "year": "2023-24",
+    "sector": "Consumer Discretionary",
+    "source": "ASX"
+  },
+  {
+    "name": "AMPOL LIMITED",
+    "abn": "40004201307",
+    "income": 34642407570,
+    "taxable": 582071069,
+    "tax_payable": 149573467,
+    "year": "2023-24",
+    "sector": "Energy",
+    "source": "ASX"
+  },
+  {
+    "name": "GLENCORE INVESTMENT PTY LIMITED",
+    "abn": "67076513034",
+    "income": 31624832261,
+    "taxable": 7941907945,
+    "tax_payable": 1895906605,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "BP REGIONAL AUSTRALASIA HOLDINGS PTY LTD",
+    "abn": "91092495700",
+    "income": 28638152594,
+    "taxable": 932155822,
+    "tax_payable": 275563222,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "FORTESCUE LTD",
+    "abn": "57002594872",
+    "income": 28380243392,
+    "taxable": 13426560563,
+    "tax_payable": 3934268084,
+    "year": "2023-24",
+    "sector": "Materials",
+    "source": "ASX"
+  },
+  {
+    "name": "VIVA ENERGY GROUP LIMITED",
+    "abn": "74626661032",
+    "income": 27188043588,
+    "taxable": 103091560,
+    "tax_payable": 17866048,
+    "year": "2023-24",
+    "sector": "Energy",
+    "source": "ASX"
+  },
+  {
+    "name": "MACQUARIE GROUP LIMITED",
+    "abn": "94122169279",
+    "income": 22340545675,
+    "taxable": 1779555309,
+    "tax_payable": 322677224,
+    "year": "2023-24",
+    "sector": "Financials",
+    "source": "ASX"
+  },
+  {
+    "name": "EXXONMOBIL AUSTRALIA PTY LTD",
+    "abn": "48091561198",
+    "income": 22037894313,
+    "taxable": 2616078344,
+    "tax_payable": 769614520,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "QANTAS AIRWAYS LIMITED",
+    "abn": "16009661901",
+    "income": 21573449104,
+    "taxable": 46012050,
+    "tax_payable": 8020011,
+    "year": "2023-24",
+    "sector": "Industrials",
+    "source": "ASX"
+  },
+  {
+    "name": "TELSTRA GROUP LIMITED",
+    "abn": "56650620303",
+    "income": 21527770893,
+    "taxable": 2724036436,
+    "tax_payable": 756290348,
+    "year": "2023-24",
+    "sector": "Communication Services",
+    "source": "ASX"
+  },
+  {
+    "name": "WOODSIDE ENERGY GROUP LTD",
+    "abn": "55004898962",
+    "income": 19834595421,
+    "taxable": 7517012294,
+    "tax_payable": 1720802305,
+    "year": "2023-24",
+    "sector": "Energy",
+    "source": "ASX"
+  },
+  {
+    "name": "JBS GLOBAL MEAT HOLDINGS PTY LTD",
+    "abn": "84050207960",
+    "income": 19713426978,
+    "taxable": null,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "CHEVRON AUSTRALIA HOLDINGS PTY LTD",
+    "abn": "60098079344",
+    "income": 19430282295,
+    "taxable": 11843668310,
+    "tax_payable": 3515275856,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "ORIGIN ENERGY LIMITED",
+    "abn": "30000051696",
+    "income": 18224337001,
+    "taxable": 2373946234,
+    "tax_payable": 650122239,
+    "year": "2023-24",
+    "sector": "Utilities",
+    "source": "ASX"
+  },
+  {
+    "name": "METCASH LIMITED",
+    "abn": "32112073480",
+    "income": 17742955615,
+    "taxable": 291614888,
+    "tax_payable": 80878699,
+    "year": "2023-24",
+    "sector": "Consumer Staples",
+    "source": "ASX"
+  },
+  {
+    "name": "SUNCORP GROUP LIMITED",
+    "abn": "66145290124",
+    "income": 17514951978,
+    "taxable": 1389940529,
+    "tax_payable": 409075024,
+    "year": "2023-24",
+    "sector": "Financials",
+    "source": "ASX"
+  },
+  {
+    "name": "INSURANCE AUSTRALIA GROUP LIMITED",
+    "abn": "60090739923",
+    "income": 15579277986,
+    "taxable": 273881995,
+    "tax_payable": 9,
+    "year": "2023-24",
+    "sector": "Financials",
+    "source": "ASX"
+  },
+  {
+    "name": "TOYOTA MOTOR CORPORATION AUSTRALIA LIMITED",
+    "abn": "64009686097",
+    "income": 14831942123,
+    "taxable": 966650469,
+    "tax_payable": 286695893,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "SHELL ENERGY HOLDINGS AUSTRALIA LIMITED",
+    "abn": "69054260776",
+    "income": 13318792623,
+    "taxable": 3440248427,
+    "tax_payable": 988122239,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "AGL ENERGY LIMITED",
+    "abn": "74115061375",
+    "income": 12813402479,
+    "taxable": null,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "ALDI FOODS PTY LTD",
+    "abn": "18086210139",
+    "income": 12494422539,
+    "taxable": 595441464,
+    "tax_payable": 178632439,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "APPLE PTY LTD",
+    "abn": "46002510054",
+    "income": 12429040462,
+    "taxable": 528759906,
+    "tax_payable": 153677943,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "PET CARE HOLDINGS AUSTRALIA PTY LTD",
+    "abn": "77000060364",
+    "income": 10798675134,
+    "taxable": 293448628,
+    "tax_payable": 87657515,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "ICHTHYS LNG PTY LTD",
+    "abn": "42150217299",
+    "income": 10661856034,
+    "taxable": null,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "MITSUBISHI DEVELOPMENT PTY LTD",
+    "abn": "17009779873",
+    "income": 10450821801,
+    "taxable": 3046330473,
+    "tax_payable": 907793578,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "BHP IRON ORE (JIMBLEBAR) PTY LTD",
+    "abn": "95009114210",
+    "income": 10259384389,
+    "taxable": 7035778515,
+    "tax_payable": 2110733555,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "AUSTRALIA PACIFIC LNG PTY LTD",
+    "abn": "68001646331",
+    "income": 10129628977,
+    "taxable": 1875367925,
+    "tax_payable": 551569080,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "WAM LEADERS LIMITED",
+    "abn": "33611053751",
+    "income": 10107955457,
+    "taxable": 99574152,
+    "tax_payable": 16505258,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "WINDFIELD HOLDINGS PTY LTD",
+    "abn": "60160456164",
+    "income": 9982823868,
+    "taxable": 8793538293,
+    "tax_payable": 2638061488,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "QBE INSURANCE GROUP LIMITED",
+    "abn": "28008485014",
+    "income": 9805691008,
+    "taxable": 629211890,
+    "tax_payable": 162485644,
+    "year": "2023-24",
+    "sector": "Financials",
+    "source": "ASX"
+  },
+  {
+    "name": "MITSUI & CO. (AUSTRALIA) LTD",
+    "abn": "64004349795",
+    "income": 9650940494,
+    "taxable": 4260176892,
+    "tax_payable": 807587942,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "BUPA ANZ GROUP PTY LTD",
+    "abn": "95608490455",
+    "income": 9564413468,
+    "taxable": 261557106,
+    "tax_payable": 76520701,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "ROY HILL HOLDINGS PTY LTD",
+    "abn": "71123721077",
+    "income": 9471029300,
+    "taxable": 4835170076,
+    "tax_payable": 1443927946,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "JB HI-FI LIMITED",
+    "abn": "80093220136",
+    "income": 9303561147,
+    "taxable": 640790498,
+    "tax_payable": 192237055,
+    "year": "2023-24",
+    "sector": "Consumer Discretionary",
+    "source": "ASX"
+  },
+  {
+    "name": "AUSTRALIAN POSTAL CORPORATION",
+    "abn": "28864970579",
+    "income": 9294650631,
+    "taxable": 154003,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "ABC REFINERY (AUSTRALIA) PTY LIMITED",
+    "abn": "86621121079",
+    "income": 9259126230,
+    "taxable": 30112120,
+    "tax_payable": 9033636,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "DOWNER EDI LIMITED",
+    "abn": "97003872848",
+    "income": 8651468912,
+    "taxable": 110575305,
+    "tax_payable": 21952593,
+    "year": "2023-24",
+    "sector": "Industrials",
+    "source": "ASX"
+  },
+  {
+    "name": "RTPDS AUS PTY LTD",
+    "abn": "21099346899",
+    "income": 8600049468,
+    "taxable": 12285763754,
+    "tax_payable": 14840,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "FLORA GREEN PTY LTD",
+    "abn": "47608829214",
+    "income": 8252256011,
+    "taxable": 389057938,
+    "tax_payable": 95438973,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "SANTOS LIMITED",
+    "abn": "80007550923",
+    "income": 8210276022,
+    "taxable": 21189419,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": "Energy",
+    "source": "ASX"
+  },
+  {
+    "name": "SINGAPORE TELECOM AUSTRALIA INVESTMENTS PTY LIMITED",
+    "abn": "69096686190",
+    "income": 8203717550,
+    "taxable": null,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "MICROSOFT PTY LTD",
+    "abn": "29002589460",
+    "income": 8024968022,
+    "taxable": 538868962,
+    "tax_payable": 161660689,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "MEDIBANK PRIVATE LIMITED",
+    "abn": "47080890259",
+    "income": 7953511986,
+    "taxable": 932699835,
+    "tax_payable": 276489460,
+    "year": "2023-24",
+    "sector": "Financials",
+    "source": "ASX"
+  },
+  {
+    "name": "YANCOAL AUSTRALIA LIMITED",
+    "abn": "82111859119",
+    "income": 7932085400,
+    "taxable": 2814482813,
+    "tax_payable": 837184056,
+    "year": "2023-24",
+    "sector": "Energy",
+    "source": "ASX"
+  },
+  {
+    "name": "HANCOCK PROSPECTING PTY LTD",
+    "abn": "69008676417",
+    "income": 7922948764,
+    "taxable": 7342678093,
+    "tax_payable": 983862632,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "ALLIANZ AUSTRALIA LIMITED",
+    "abn": "21000006226",
+    "income": 7678143379,
+    "taxable": 308027855,
+    "tax_payable": 91649888,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "CHEVRON AUSTRALIA DOWNSTREAM HOLDINGS PTY LTD",
+    "abn": "15637003662",
+    "income": 7507792916,
+    "taxable": null,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "EAGERS AUTOMOTIVE LIMITED",
+    "abn": "87009680013",
+    "income": 7506718528,
+    "taxable": 366299774,
+    "tax_payable": 83675249,
+    "year": "2023-24",
+    "sector": "Consumer Discretionary",
+    "source": "ASX"
+  },
+  {
+    "name": "TIANQI LITHIUM ENERGY AUSTRALIA PTY LTD",
+    "abn": "24862057747",
+    "income": 7489099632,
+    "taxable": 4546731134,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "PRUDENTIAL ASSURANCE COMPANY SINGAPORE (PTE) LIMITED",
+    "abn": "",
+    "income": 7477530115,
+    "taxable": 8571169,
+    "tax_payable": 2571351,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "BLUESCOPE STEEL LIMITED",
+    "abn": "16000011058",
+    "income": 7436340987,
+    "taxable": 232458490,
+    "tax_payable": 53601850,
+    "year": "2023-24",
+    "sector": "Materials",
+    "source": "ASX"
+  },
+  {
+    "name": "LIBERTY HOLDINGS AUSTRALIA PTY LTD",
+    "abn": "16627011938",
+    "income": 7350988383,
+    "taxable": null,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "SGH LIMITED",
+    "abn": "46142003469",
+    "income": 7302244500,
+    "taxable": 856229891,
+    "tax_payable": 156493252,
+    "year": "2023-24",
+    "sector": "Industrials",
+    "source": "ASX"
+  },
+  {
+    "name": "HOPE DOWNS MARKETING COMPANY PTY LTD",
+    "abn": "58115712117",
+    "income": 7180076008,
+    "taxable": null,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "HOCHTIEF AUSTRALIA HOLDINGS LIMITED",
+    "abn": "17103181675",
+    "income": 7177030047,
+    "taxable": 177929669,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "GRAINCORP LIMITED",
+    "abn": "60057186035",
+    "income": 7152365295,
+    "taxable": 208151894,
+    "tax_payable": 62291693,
+    "year": "2023-24",
+    "sector": "Consumer Staples",
+    "source": "ASX"
+  },
+  {
+    "name": "ENDEAVOUR GROUP LIMITED",
+    "abn": "77159767843",
+    "income": 7134736112,
+    "taxable": 835275133,
+    "tax_payable": 23439683,
+    "year": "2023-24",
+    "sector": "Consumer Staples",
+    "source": "ASX"
+  },
+  {
+    "name": "ENERGYAUSTRALIA HOLDINGS LIMITED",
+    "abn": "57101876135",
+    "income": 7046314325,
+    "taxable": null,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "CCCI AUSTRALIA PTY LTD",
+    "abn": "95603555988",
+    "income": 7008190194,
+    "taxable": 70227831,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "AUSTRALIAN LEISURE AND HOSPITALITY GROUP PTY LIMITED",
+    "abn": "37067391511",
+    "income": 7008093216,
+    "taxable": 644315538,
+    "tax_payable": 193294661,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "TAL DAI-ICHI LIFE AUSTRALIA PTY LTD",
+    "abn": "97150070483",
+    "income": 7006502398,
+    "taxable": null,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "INPEX HOLDINGS AUSTRALIA PTY LTD",
+    "abn": "61150217315",
+    "income": 6873322704,
+    "taxable": 1442145571,
+    "tax_payable": 340107898,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "TIMELEY INVESTMENTS (WA) PTY LTD",
+    "abn": "31641481478",
+    "income": 6813476224,
+    "taxable": null,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "ASAHI HOLDINGS (AUSTRALIA) PTY LTD",
+    "abn": "48135315767",
+    "income": 6554607329,
+    "taxable": 957839032,
+    "tax_payable": 282999072,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "QGC UPSTREAM HOLDINGS PTY LIMITED",
+    "abn": "76130856843",
+    "income": 6276891526,
+    "taxable": 2392837458,
+    "tax_payable": 549240863,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "ATLASSIAN AUSTRALIA 1 PTY LTD",
+    "abn": "98166799542",
+    "income": 6210997876,
+    "taxable": 1178402327,
+    "tax_payable": 252785216,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "LENDLEASE CORPORATION LTD",
+    "abn": "32000226228",
+    "income": 6160481640,
+    "taxable": 544624455,
+    "tax_payable": 147809648,
+    "year": "2023-24",
+    "sector": "Real Estate",
+    "source": "ASX"
+  },
+  {
+    "name": "NBN CO LIMITED",
+    "abn": "86136533741",
+    "income": 6099069270,
+    "taxable": null,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "MINERAL RESOURCES LIMITED",
+    "abn": "33118549910",
+    "income": 6038377984,
+    "taxable": 39285714,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": "Materials",
+    "source": "ASX"
+  },
+  {
+    "name": "RAMSAY HEALTH CARE LIMITED",
+    "abn": "57001288768",
+    "income": 6025268421,
+    "taxable": 651034425,
+    "tax_payable": 173693698,
+    "year": "2023-24",
+    "sector": "Health Care",
+    "source": "ASX"
+  },
+  {
+    "name": "INSURANCE MANUFACTURERS OF AUSTRALIA PTY LTD",
+    "abn": "93004208084",
+    "income": 5784554948,
+    "taxable": 593799118,
+    "tax_payable": 175958287,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "VIRGIN AUSTRALIA HOLDINGS PTY LTD",
+    "abn": "54100686226",
+    "income": 5783599998,
+    "taxable": 1675515,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "ING AUSTRALIA HOLDINGS LIMITED",
+    "abn": "27008459596",
+    "income": 5767132591,
+    "taxable": 1020419357,
+    "tax_payable": 306125807,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "ANGLO AMERICAN AUSTRALIA LTD",
+    "abn": "47004892371",
+    "income": 5753180084,
+    "taxable": 1043235728,
+    "tax_payable": 117076625,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "BANK OF QUEENSLAND LIMITED",
+    "abn": "32009656740",
+    "income": 5730775972,
+    "taxable": 649890046,
+    "tax_payable": 194504354,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "PIONEER SAIL HOLDINGS PTY LTD",
+    "abn": "45617844569",
+    "income": 5621681041,
+    "taxable": 1391129092,
+    "tax_payable": 373371022,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "TPG TELECOM LIMITED",
+    "abn": "76096304620",
+    "income": 5580533886,
+    "taxable": 1504755,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "DYNO NOBEL LIMITED",
+    "abn": "42004080264",
+    "income": 5543903283,
+    "taxable": 153474693,
+    "tax_payable": 19047907,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "SOUTH32 LIMITED",
+    "abn": "84093732597",
+    "income": 5451320507,
+    "taxable": 1061104304,
+    "tax_payable": 200941784,
+    "year": "2023-24",
+    "sector": "Materials",
+    "source": "ASX"
+  },
+  {
+    "name": "FORD MOTOR COMPANY OF AUSTRALIA PTY LTD",
+    "abn": "30004116223",
+    "income": 5338645596,
+    "taxable": null,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "VITERRA AUSTRALIA HOLDINGS PTY LTD",
+    "abn": "81161229867",
+    "income": 5331803869,
+    "taxable": 498181236,
+    "tax_payable": 149454371,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "CW GROUP HOLDINGS LIMITED",
+    "abn": "83635851839",
+    "income": 5303138683,
+    "taxable": 483376859,
+    "tax_payable": 142225530,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "ITOCHU AUSTRALIA LIMITED",
+    "abn": "63000192790",
+    "income": 5212284744,
+    "taxable": 2272984762,
+    "tax_payable": 476338450,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "VENTIA SERVICES GROUP LTD",
+    "abn": "53603253541",
+    "income": 5195535966,
+    "taxable": 116220511,
+    "tax_payable": 31333803,
+    "year": "2023-24",
+    "sector": "Industrials",
+    "source": "ASX"
+  },
+  {
+    "name": "BENDIGO AND ADELAIDE BANK LIMITED",
+    "abn": "11068049178",
+    "income": 5160769087,
+    "taxable": 673412904,
+    "tax_payable": 191661906,
+    "year": "2023-24",
+    "sector": "Financials",
+    "source": "ASX"
+  },
+  {
+    "name": "COSTCO WHOLESALE AUSTRALIA PTY LTD",
+    "abn": "57104012893",
+    "income": 5152183261,
+    "taxable": 130435236,
+    "tax_payable": 39130571,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "CSL LIMITED",
+    "abn": "99051588348",
+    "income": 5150908572,
+    "taxable": 252804030,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": "Health Care",
+    "source": "ASX"
+  },
+  {
+    "name": "ALCOA OF AUSTRALIA LTD",
+    "abn": "93004879298",
+    "income": 4916440846,
+    "taxable": 360015190,
+    "tax_payable": 107990297,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "AGRIUM SP HOLDINGS PTY LIMITED",
+    "abn": "58146674400",
+    "income": 4736870041,
+    "taxable": 296121720,
+    "tax_payable": 57310577,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "SIME DARBY INDUSTRIAL AUSTRALIA PTY LTD",
+    "abn": "56153652594",
+    "income": 4710569025,
+    "taxable": 318834728,
+    "tax_payable": 93061575,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "MML HOLDINGS LIMITED",
+    "abn": "55084402380",
+    "income": 4639667257,
+    "taxable": 416180807,
+    "tax_payable": 124846903,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "BORAL LIMITED",
+    "abn": "13008421761",
+    "income": 4637723950,
+    "taxable": 195656994,
+    "tax_payable": 51164078,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "BEGA CHEESE LIMITED",
+    "abn": "81008358503",
+    "income": 4579135750,
+    "taxable": 50443661,
+    "tax_payable": 11369382,
+    "year": "2023-24",
+    "sector": "Consumer Staples",
+    "source": "ASX"
+  },
+  {
+    "name": "THIESS GROUP HOLDINGS PTY LTD",
+    "abn": "34646054757",
+    "income": 4532720591,
+    "taxable": 207025458,
+    "tax_payable": 57604395,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "EG GROUP AUSTRALIA PTY LTD",
+    "abn": "39629792810",
+    "income": 4531198261,
+    "taxable": null,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "WAM CAPITAL LIMITED",
+    "abn": "34086587395",
+    "income": 4389110009,
+    "taxable": 267421670,
+    "tax_payable": 70511009,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "STANMORE RESOURCES LIMITED",
+    "abn": "27131920968",
+    "income": 4353777095,
+    "taxable": 1248252901,
+    "tax_payable": 372435138,
+    "year": "2023-24",
+    "sector": "Materials",
+    "source": "ASX"
+  },
+  {
+    "name": "GLENCORE HOLDINGS PTY LIMITED",
+    "abn": "41104160689",
+    "income": 4324923130,
+    "taxable": 5861559073,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "CCEP HOLDINGS (AUSTRALIA) PTY LTD",
+    "abn": "80645547968",
+    "income": 4319182074,
+    "taxable": 416718760,
+    "tax_payable": 118752222,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "CONVENIENCE GROUP HOLDINGS PTY LTD",
+    "abn": "48662201274",
+    "income": 4298129869,
+    "taxable": 107999785,
+    "tax_payable": 32399936,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "APA INFRASTRUCTURE TRUST",
+    "abn": "21858175226",
+    "income": 4285580611,
+    "taxable": 105400255,
+    "tax_payable": 30161436,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "INTEGRATED FOODS HOLDINGS PTY LTD",
+    "abn": "42603619692",
+    "income": 4250646015,
+    "taxable": 280126496,
+    "tax_payable": 72714326,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "NORTHERN STAR RESOURCES LTD",
+    "abn": "43092832892",
+    "income": 4229207557,
+    "taxable": 26955515,
+    "tax_payable": 7960424,
+    "year": "2023-24",
+    "sector": "Materials",
+    "source": "ASX"
+  },
+  {
+    "name": "MARUBENI AUSTRALIA LIMITED",
+    "abn": "53000329699",
+    "income": 4229145122,
+    "taxable": 1351209763,
+    "tax_payable": 101992993,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "SNOWY HYDRO LIMITED",
+    "abn": "17090574431",
+    "income": 4200948747,
+    "taxable": 603661231,
+    "tax_payable": 181098369,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "VOLKSWAGEN GROUP AUSTRALIA PTY LTD",
+    "abn": "14093117876",
+    "income": 4187717667,
+    "taxable": 103530798,
+    "tax_payable": 31059239,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "HOLLARD HOLDINGS AUSTRALIA PTY LTD",
+    "abn": "30154586802",
+    "income": 4119728384,
+    "taxable": null,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "WHITEHAVEN COAL LIMITED",
+    "abn": "68124425396",
+    "income": 4090053710,
+    "taxable": 212893998,
+    "tax_payable": 63866146,
+    "year": "2023-24",
+    "sector": "Energy",
+    "source": "ASX"
+  },
+  {
+    "name": "PEABODY AUSTRALIA HOLDCO PTY LTD",
+    "abn": "61154820130",
+    "income": 4060313259,
+    "taxable": 793817864,
+    "tax_payable": 190526230,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "SINO IRON HOLDINGS PTY LTD",
+    "abn": "43118791772",
+    "income": 4041983960,
+    "taxable": null,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "THE LOTTERY CORPORATION LIMITED",
+    "abn": "21081925706",
+    "income": 4036237102,
+    "taxable": 647866617,
+    "tax_payable": 192324418,
+    "year": "2023-24",
+    "sector": "Consumer Discretionary",
+    "source": "ASX"
+  },
+  {
+    "name": "AURIZON HOLDINGS LIMITED",
+    "abn": "14146335622",
+    "income": 3959782160,
+    "taxable": 422573779,
+    "tax_payable": 124564747,
+    "year": "2023-24",
+    "sector": "Industrials",
+    "source": "ASX"
+  },
+  {
+    "name": "PRATT CONSOLIDATED HOLDINGS PTY LTD",
+    "abn": "43104958581",
+    "income": 3936793535,
+    "taxable": 13415053,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "MAZDA AUSTRALIA PTY LTD",
+    "abn": "78004690804",
+    "income": 3918977417,
+    "taxable": 112443878,
+    "tax_payable": 33715634,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "ZURICH FINANCIAL SERVICES AUSTRALIA LIMITED",
+    "abn": "11008423372",
+    "income": 3913905263,
+    "taxable": null,
+    "tax_payable": 9837849,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "TESLA MOTORS AUSTRALIA PTY LIMITED",
+    "abn": "68142889816",
+    "income": 3825061948,
+    "taxable": 89855107,
+    "tax_payable": 26956532,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "CLEANAWAY WASTE MANAGEMENT LIMITED",
+    "abn": "74101155220",
+    "income": 3785369661,
+    "taxable": 388408848,
+    "tax_payable": 91336564,
+    "year": "2023-24",
+    "sector": "Industrials",
+    "source": "ASX"
+  },
+  {
+    "name": "REECE LIMITED",
+    "abn": "49004313133",
+    "income": 3784112799,
+    "taxable": 425457724,
+    "tax_payable": 122198668,
+    "year": "2023-24",
+    "sector": "Industrials",
+    "source": "ASX"
+  },
+  {
+    "name": "PHILIP MORRIS (AUSTRALIA) LIMITED",
+    "abn": "68004316901",
+    "income": 3746613134,
+    "taxable": 63549645,
+    "tax_payable": 19064894,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "SCENTRE GROUP LIMITED",
+    "abn": "66001671496",
+    "income": 3721258078,
+    "taxable": 79809955,
+    "tax_payable": 23923702,
+    "year": "2023-24",
+    "sector": "Real Estate",
+    "source": "ASX"
+  },
+  {
+    "name": "FULTON HOGAN AUSTRALIA PTY LTD",
+    "abn": "42135849115",
+    "income": 3707758897,
+    "taxable": 233690663,
+    "tax_payable": 69613726,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "SONIC HEALTHCARE LIMITED",
+    "abn": "24004196909",
+    "income": 3705236967,
+    "taxable": 267309511,
+    "tax_payable": 57836788,
+    "year": "2023-24",
+    "sector": "Health Care",
+    "source": "ASX"
+  },
+  {
+    "name": "PERSOL AUSTRALIA HOLDINGS PTY LTD",
+    "abn": "58620794130",
+    "income": 3697207782,
+    "taxable": 28531385,
+    "tax_payable": 8559416,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "UNITED TERMINALS PTY LTD",
+    "abn": "73129440955",
+    "income": 3688654406,
+    "taxable": 886328,
+    "tax_payable": 265898,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "SUPER RETAIL GROUP LIMITED",
+    "abn": "81108676204",
+    "income": 3651205836,
+    "taxable": 398059312,
+    "tax_payable": 115072211,
+    "year": "2023-24",
+    "sector": "Consumer Discretionary",
+    "source": "ASX"
+  },
+  {
+    "name": "AMP LIMITED",
+    "abn": "49079354519",
+    "income": 3611019342,
+    "taxable": null,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": "Financials",
+    "source": "ASX"
+  },
+  {
+    "name": "UBER AUSTRALIA HOLDINGS PTY LTD",
+    "abn": "54622364318",
+    "income": 3583748749,
+    "taxable": 56564550,
+    "tax_payable": 16969365,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "ACCIONA GEOTECH HOLDING PTY LTD",
+    "abn": "99616868314",
+    "income": 3579910833,
+    "taxable": 118248046,
+    "tax_payable": 30726836,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "RESOLUTION LIFE NOHC PTY LTD",
+    "abn": "48633375069",
+    "income": 3571763544,
+    "taxable": 427331176,
+    "tax_payable": 74900791,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "AIA AUSTRALIA LIMITED",
+    "abn": "79004837861",
+    "income": 3566000000,
+    "taxable": null,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "MONDELEZ AUSTRALIA GROUP CO PTY LTD",
+    "abn": "53147371846",
+    "income": 3565510133,
+    "taxable": 80529951,
+    "tax_payable": 22609676,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "CBH GRAIN PTY LTD",
+    "abn": "39089394883",
+    "income": 3546583572,
+    "taxable": 52605779,
+    "tax_payable": 15767962,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "AMAZON WEB SERVICES AUSTRALIA PTY LTD",
+    "abn": "63605345891",
+    "income": 3433713398,
+    "taxable": 203525478,
+    "tax_payable": 61057643,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "ORICA LIMITED",
+    "abn": "24004145868",
+    "income": 3422937583,
+    "taxable": 162866430,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": "Materials",
+    "source": "ASX"
+  },
+  {
+    "name": "SIGMA HEALTHCARE LIMITED",
+    "abn": "15088417403",
+    "income": 3409227018,
+    "taxable": null,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": "Health Care",
+    "source": "ASX"
+  },
+  {
+    "name": "TOTALENERGIES EP HOLDINGS AUSTRALIA PTY LTD",
+    "abn": "11602975619",
+    "income": 3390388242,
+    "taxable": null,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "TEYS AUSTRALIA PTY LTD",
+    "abn": "38009872600",
+    "income": 3360264095,
+    "taxable": 448438170,
+    "tax_payable": 125691464,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "J HUTCHINSON PTY LTD",
+    "abn": "52009778330",
+    "income": 3356823413,
+    "taxable": 91665269,
+    "tax_payable": 27498349,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "KOMATSU AUSTRALIA PTY LTD",
+    "abn": "63053514739",
+    "income": 3321997303,
+    "taxable": 352249877,
+    "tax_payable": 102449197,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "GOLD FIELDS AUSTRALIA PTY LTD",
+    "abn": "91098385285",
+    "income": 3305438394,
+    "taxable": 1176591018,
+    "tax_payable": 350178488,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "JELLINBAH GROUP PTY LTD",
+    "abn": "54010754793",
+    "income": 3278524810,
+    "taxable": 1418828463,
+    "tax_payable": 425361961,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "INGHAMS GROUP LIMITED",
+    "abn": "39162709506",
+    "income": 3266013841,
+    "taxable": 152765851,
+    "tax_payable": 45114181,
+    "year": "2023-24",
+    "sector": "Consumer Staples",
+    "source": "ASX"
+  },
+  {
+    "name": "QUBE HOLDINGS LIMITED",
+    "abn": "14149723053",
+    "income": 3265538460,
+    "taxable": 434757700,
+    "tax_payable": 93341448,
+    "year": "2023-24",
+    "sector": "Industrials",
+    "source": "ASX"
+  },
+  {
+    "name": "TRANSURBAN HOLDINGS LIMITED",
+    "abn": "86098143429",
+    "income": 3253730142,
+    "taxable": null,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": "Industrials",
+    "source": "ASX"
+  },
+  {
+    "name": "MERCEDES-BENZ GROUP AUSTRALIA/PACIFIC PTY LTD",
+    "abn": "50004348421",
+    "income": 3213075641,
+    "taxable": 199969426,
+    "tax_payable": 59990828,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "TRAVELEX AUSTRALIA HOLDINGS PTY LIMITED",
+    "abn": "98105260035",
+    "income": 3208281548,
+    "taxable": null,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "COFCO INTERNATIONAL AUSTRALIA PTY LTD",
+    "abn": "25001069423",
+    "income": 3206029409,
+    "taxable": 23218181,
+    "tax_payable": 6965454,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "ROBE RIVER MINING CO PTY LTD",
+    "abn": "71008694246",
+    "income": 3173128269,
+    "taxable": 1827712973,
+    "tax_payable": 548205684,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "ELDERS LIMITED",
+    "abn": "34004336636",
+    "income": 3159849553,
+    "taxable": 54688233,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": "Consumer Staples",
+    "source": "ASX"
+  },
+  {
+    "name": "AMAZON COMMERCIAL SERVICES PTY LTD",
+    "abn": "30616935623",
+    "income": 3121430925,
+    "taxable": 83069842,
+    "tax_payable": 24920953,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "LOUIS DREYFUS COMPANY MELBOURNE HOLDINGS PTY LTD",
+    "abn": "18161877185",
+    "income": 3116679979,
+    "taxable": 47257318,
+    "tax_payable": 14119592,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "LEPGF PTY LTD",
+    "abn": "82640391868",
+    "income": 3103760230,
+    "taxable": 142061514,
+    "tax_payable": 37589570,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "NIB HOLDINGS LIMITED",
+    "abn": "51125633856",
+    "income": 3081279489,
+    "taxable": 254452653,
+    "tax_payable": 74929961,
+    "year": "2023-24",
+    "sector": "Financials",
+    "source": "ASX"
+  },
+  {
+    "name": "BBPHA 1 PTY LTD",
+    "abn": "15144078151",
+    "income": 3070095031,
+    "taxable": null,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "HYUNDAI MOTOR COMPANY AUSTRALIA PTY LTD",
+    "abn": "58008995588",
+    "income": 3055044641,
+    "taxable": 129743383,
+    "tax_payable": 38923015,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "BARTTER HOLDINGS PTY LIMITED",
+    "abn": "84104671561",
+    "income": 3045892616,
+    "taxable": 100655007,
+    "tax_payable": 30196502,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "BAIADA POULTRY PTY LIMITED",
+    "abn": "96002925948",
+    "income": 3030620256,
+    "taxable": 191244585,
+    "tax_payable": 57373376,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "NXE AUSTRALIA PTY LIMITED",
+    "abn": "85625190990",
+    "income": 2993555689,
+    "taxable": 930278,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "PFD FOOD SERVICES PTY LTD",
+    "abn": "29006972381",
+    "income": 2992267001,
+    "taxable": 81421771,
+    "tax_payable": 24426531,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "TEAM GLOBAL EXPRESS PTY LTD",
+    "abn": "15084157666",
+    "income": 2987599227,
+    "taxable": null,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "EVOLUTION MINING LTD",
+    "abn": "74084669036",
+    "income": 2980975163,
+    "taxable": 295719147,
+    "tax_payable": 87769021,
+    "year": "2023-24",
+    "sector": "Materials",
+    "source": "ASX"
+  },
+  {
+    "name": "FOOD INVESTMENTS PTY LTD",
+    "abn": "85008426177",
+    "income": 2935068154,
+    "taxable": 118846750,
+    "tax_payable": 28721342,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "TOLL HOLDINGS PTY LIMITED",
+    "abn": "25006592089",
+    "income": 2914037114,
+    "taxable": 626328,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "GPC ASIA PACIFIC HOLDINGS PTY LTD",
+    "abn": "80162550978",
+    "income": 2912709397,
+    "taxable": 219905935,
+    "tax_payable": 63210534,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "SS SILVER PTY LTD",
+    "abn": "40644174710",
+    "income": 2900315252,
+    "taxable": null,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "SAMSUNG ELECTRONICS AUSTRALIA PTY LIMITED",
+    "abn": "63002915648",
+    "income": 2881698749,
+    "taxable": 17265576,
+    "tax_payable": 5179673,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "ACCENTURE AUSTRALIA HOLDINGS PTY LIMITED",
+    "abn": "61096995649",
+    "income": 2874170635,
+    "taxable": 155207810,
+    "tax_payable": 43498263,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "A.C.N. 166 119 133 PTY LTD",
+    "abn": "31166119133",
+    "income": 2866292494,
+    "taxable": null,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "ANZ HOSPITALS TOPCO PTY LTD",
+    "abn": "20631014965",
+    "income": 2861699552,
+    "taxable": null,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "NISSAN MOTOR CO (AUSTRALIA) PTY LTD",
+    "abn": "54004663156",
+    "income": 2857020108,
+    "taxable": 227414188,
+    "tax_payable": 67415878,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "LAING O'ROURKE AUSTRALIA GROUP PTY LIMITED",
+    "abn": "36001333900",
+    "income": 2846610435,
+    "taxable": 2819682,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "DIB GROUP PTY LTD",
+    "abn": "87002889474",
+    "income": 2827426023,
+    "taxable": 98430686,
+    "tax_payable": 29444349,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "OAKBRIDGE PTY LIMITED",
+    "abn": "67000230419",
+    "income": 2823860874,
+    "taxable": 959355506,
+    "tax_payable": 286239569,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "MITSUBISHI MOTORS AUSTRALIA LIMITED",
+    "abn": "53007870395",
+    "income": 2820923232,
+    "taxable": 171893162,
+    "tax_payable": 51567949,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "HUNTER VALLEY ENERGY COAL PTY LTD",
+    "abn": "39062894464",
+    "income": 2789685475,
+    "taxable": 349788836,
+    "tax_payable": 104936652,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "BMW AUSTRALIA LIMITED",
+    "abn": "11004675129",
+    "income": 2782385543,
+    "taxable": 224965384,
+    "tax_payable": 66651684,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "NRW HOLDINGS LIMITED",
+    "abn": "95118300217",
+    "income": 2747047501,
+    "taxable": 81370515,
+    "tax_payable": 24397000,
+    "year": "2023-24",
+    "sector": "Industrials",
+    "source": "ASX"
+  },
+  {
+    "name": "NESTLE AUSTRALIA LIMITED",
+    "abn": "77000011316",
+    "income": 2733807301,
+    "taxable": 190559741,
+    "tax_payable": 42751576,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "AUTO & GENERAL INSURANCE COMPANY LIMITED",
+    "abn": "42111586353",
+    "income": 2719903642,
+    "taxable": 174718613,
+    "tax_payable": 52415584,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "MIRVAC LIMITED",
+    "abn": "92003280699",
+    "income": 2712952612,
+    "taxable": 5400059,
+    "tax_payable": 1199678,
+    "year": "2023-24",
+    "sector": "Real Estate",
+    "source": "ASX"
+  },
+  {
+    "name": "HILTON FOODS AUSTRALIA PTY LTD",
+    "abn": "60613035500",
+    "income": 2712753997,
+    "taxable": 44034265,
+    "tax_payable": 13210280,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "CHALLENGER LIMITED",
+    "abn": "85106842371",
+    "income": 2705622937,
+    "taxable": 132798412,
+    "tax_payable": 23787569,
+    "year": "2023-24",
+    "sector": "Financials",
+    "source": "ASX"
+  },
+  {
+    "name": "HSBC AUSTRALIA HOLDINGS PTY LIMITED",
+    "abn": "22006513873",
+    "income": 2704772142,
+    "taxable": 518175567,
+    "tax_payable": 155452670,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "RTA HOLDCO AUSTRALIA 1 PTY LTD",
+    "abn": "17128762318",
+    "income": 2698920764,
+    "taxable": 16255037,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "MYER HOLDINGS LIMITED",
+    "abn": "14119085602",
+    "income": 2687821120,
+    "taxable": 73787846,
+    "tax_payable": 22133308,
+    "year": "2023-24",
+    "sector": "Consumer Discretionary",
+    "source": "ASX"
+  },
+  {
+    "name": "CH2 HOLDINGS PTY LIMITED",
+    "abn": "80113630505",
+    "income": 2671412258,
+    "taxable": 20359307,
+    "tax_payable": 6107792,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "DHL GLOBAL FORWARDING (AUSTRALIA) PTY LIMITED",
+    "abn": "62002636124",
+    "income": 2655357998,
+    "taxable": 188518983,
+    "tax_payable": 56555695,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "FEDERAL EXPRESS (AUSTRALIA) PTY LTD",
+    "abn": "51624271487",
+    "income": 2654681545,
+    "taxable": 51249465,
+    "tax_payable": 15374840,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "KIA AUSTRALIA PTY LTD",
+    "abn": "97110483353",
+    "income": 2654614367,
+    "taxable": 111653172,
+    "tax_payable": 33495952,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "BIDFOOD AUSTRALIA LIMITED",
+    "abn": "33000228231",
+    "income": 2612243143,
+    "taxable": 207695584,
+    "tax_payable": 62308675,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "BNP PARIBAS ARBITRAGE",
+    "abn": "51150201880",
+    "income": 2572450077,
+    "taxable": 1237747,
+    "tax_payable": 290721,
+    "year": "2023-24",
+    "sector": null
+  },
+  {
+    "name": "CORONADO AUSTRALIA HOLDINGS PTY LTD",
+    "abn": "23623524989",
+    "income": 2567844209,
+    "taxable": null,
+    "tax_payable": null,
+    "year": "2023-24",
+    "sector": null
+  }
+]

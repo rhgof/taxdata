@@ -71,6 +71,8 @@ TaxChart.buildFullTooltip = function(row) {
   parts.push('Taxable Income: ' + TaxChart.formatValue(row['Taxable Income'], 'Taxable Income'));
   parts.push('Tax Payable: ' + TaxChart.formatValue(row['Tax Payable'], 'Tax Payable'));
   parts.push('Tax Rate: ' + TaxChart.formatValue(row['Tax Rate'], 'Tax Rate'));
+  parts.push('Taxable Income Margin: ' + TaxChart.formatValue(row['Taxable Income Margin'], 'Taxable Income Margin'));
+  parts.push('Tax Revenue Rate: ' + TaxChart.formatValue(row['Tax Revenue Rate'], 'Tax Revenue Rate'));
   parts.push('Year: ' + row['Financial Year']);
   return parts.join('<br>');
 };
@@ -81,7 +83,7 @@ TaxChart.buildTooltip = function(row, xField, yField) {
 
 TaxChart.formatValue = function(val, field) {
   if (val === null || val === undefined) return 'N/A';
-  if (field === 'Tax Rate') return (val * 100).toFixed(1) + '%';
+  if (field === 'Tax Rate' || field === 'Taxable Income Margin' || field === 'Tax Revenue Rate') return (val * 100).toFixed(1) + '%';
   if (val >= 1e9) return '$' + (val / 1e9).toFixed(1) + 'B';
   if (val >= 1e6) return '$' + (val / 1e6).toFixed(1) + 'M';
   if (val >= 1e3) return '$' + (val / 1e3).toFixed(0) + 'K';
@@ -317,8 +319,8 @@ TaxChart.buildLayout = function() {
     // Log scale: gridlines on powers of 10
     if (TaxChart.state.logScaleX) layout.xaxis.dtick = 1;
     if (TaxChart.state.logScaleY) layout.yaxis.dtick = 1;
-    if (pair.x === 'Tax Rate') layout.xaxis.tickformat = '.0%';
-    if (pair.y === 'Tax Rate') layout.yaxis.tickformat = '.0%';
+    if (['Tax Rate', 'Taxable Income Margin', 'Tax Revenue Rate'].indexOf(pair.x) !== -1) layout.xaxis.tickformat = '.0%';
+    if (['Tax Rate', 'Taxable Income Margin', 'Tax Revenue Rate'].indexOf(pair.y) !== -1) layout.yaxis.tickformat = '.0%';
   } else {
     var metric = TaxChart.SINGLE_METRICS[TaxChart.state.metricIndex];
     if (mode === 'bar') {
@@ -337,7 +339,7 @@ TaxChart.buildLayout = function() {
       };
     }
     if (TaxChart.state.logScaleY) layout.yaxis.dtick = 1;
-    if (metric.field === 'Tax Rate') layout.yaxis.tickformat = '.0%';
+    if (['Tax Rate', 'Taxable Income Margin', 'Tax Revenue Rate'].indexOf(metric.field) !== -1) layout.yaxis.tickformat = '.0%';
   }
 
   return layout;

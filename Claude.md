@@ -2,9 +2,10 @@
 A browser-based interactive chart app for Australian corporate tax transparency data.
 - Embedded within a broader web page, fits 85% viewport height (no scrolling)
 - Data: CSV loaded via fetch() from URL in `data-csv-url` attribute
-- Columns: Company, Country of Ultimate Owner, Sector, Total Income (Revenue), Taxable Income, Tax Payable, Financial Year
+- Columns: Company, ABN, Country of Ultimate Owner, Sector, Total Income (Revenue), Taxable Income, Tax Payable, Financial Year
 - Some rows have null/blank Taxable Income and Tax Payable (ATO rules)
-- Derived: Tax Rate = Tax Payable / Taxable Income (displayed as percentage)
+- Derived: Tax Rate = Tax Payable / Taxable Income, Taxable Income Margin = Taxable Income / Total Income, Tax Revenue Rate = Tax Payable / Total Income (all displayed as percentages)
+- Sectors use GICS classification with ASX index abbreviations, e.g. "Materials (XMJ)", "Financials (XFJ)"
 - "Total Income (Revenue)" used consistently in all labels, tooltips, and dropdowns
 - Chart modes: Scatter, Scatter with Trails, Bar, Line
 - Trails: filled circles for latest year, open circles for prior years
@@ -24,4 +25,6 @@ A browser-based interactive chart app for Australian corporate tax transparency 
 - Tech: plain HTML/CSS/JS, Plotly.js 2.x via CDN, no build step
 - Files: index.html, styles.css, data.js, charts.js, controls.js
 - Design spec: docs/superpowers/specs/2026-03-16-tax-chart-app-design.md
-- Raw ATO data: Inputs/2023-24-corporate-report-of-entity-tax-information.xlsx
+- Data: top 200 companies by 2023-24 revenue, 11 years (2013-14 to 2023-24), 1914 rows
+- Raw ATO data: Inputs/*.xlsx (11 years of corporate tax transparency reports)
+- Sector enrichment: Inputs/ASXListedCompanies.csv (ASX GICS) + Inputs/llm_classifications.json (manual)

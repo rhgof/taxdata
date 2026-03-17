@@ -67,6 +67,24 @@ TaxChart.DERIVED_FIELDS = [
       }
       return row['Tax Payable'] / row['Taxable Income'];
     }
+  },
+  {
+    name: 'Taxable Income Margin',
+    compute: function(row) {
+      if (row['Taxable Income'] === null || row['Total Income'] === null || row['Total Income'] === 0) {
+        return null;
+      }
+      return row['Taxable Income'] / row['Total Income'];
+    }
+  },
+  {
+    name: 'Tax Revenue Rate',
+    compute: function(row) {
+      if (row['Tax Payable'] === null || row['Total Income'] === null || row['Total Income'] === 0) {
+        return null;
+      }
+      return row['Tax Payable'] / row['Total Income'];
+    }
   }
 ];
 

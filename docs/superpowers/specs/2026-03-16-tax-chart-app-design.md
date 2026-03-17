@@ -15,8 +15,9 @@ A browser-based interactive chart app that visualizes Australian corporate tax t
 | Column | Type | Notes |
 |--------|------|-------|
 | Company | string | Entity name |
+| ABN | string | Australian Business Number (11 digits), preserved for future matching |
 | Country of Ultimate Owner | string | Shown in hover tooltips |
-| Sector | string | Used for grouping, filtering, coloring |
+| Sector | string | GICS sector with ASX index abbreviation, e.g. "Materials (XMJ)" |
 | Total Income | number | Displayed as "Total Income (Revenue)" throughout the app |
 | Taxable Income | number | May be null/blank (ATO rules: not reported when zero or negative) |
 | Tax Payable | number | May be null/blank (same rules) |
@@ -30,15 +31,18 @@ TaxChart.FIELD_LABELS = {
   'Total Income': 'Total Income (Revenue)',
   'Taxable Income': 'Taxable Income',
   'Tax Payable': 'Tax Payable',
-  'Tax Rate': 'Tax Rate'
+  'Tax Rate': 'Tax Rate',
+  'Taxable Income Margin': 'Taxable Income Margin',
+  'Tax Revenue Rate': 'Tax Revenue Rate'
 };
 ```
 
 ### Derived Values
 Computed after parsing, not stored in CSV:
 - **Tax Rate** = Tax Payable / Taxable Income (null when Taxable Income is zero or null)
-- Tax Rate is displayed as a percentage throughout the app (tooltips, axis labels, tick marks)
-- Additional derived values may be added later
+- **Taxable Income Margin** = Taxable Income / Total Income (null when Total Income is zero or null)
+- **Tax Revenue Rate** = Tax Payable / Total Income (null when Total Income is zero or null)
+- All derived ratios are displayed as percentages throughout the app (tooltips, axis labels, tick marks)
 
 ### Sector Aggregation
 When viewing by sector:
@@ -94,7 +98,9 @@ TaxChart.SINGLE_METRICS = [
   { label: 'Total Income (Revenue)', field: 'Total Income' },
   { label: 'Taxable Income', field: 'Taxable Income' },
   { label: 'Tax Payable', field: 'Tax Payable' },
-  { label: 'Tax Rate', field: 'Tax Rate' }
+  { label: 'Tax Rate', field: 'Tax Rate' },
+  { label: 'Taxable Income Margin', field: 'Taxable Income Margin' },
+  { label: 'Tax Revenue Rate', field: 'Tax Revenue Rate' }
 ];
 ```
 
@@ -233,4 +239,4 @@ The app is initialized by calling `TaxChart.init(containerSelector)`, which read
 
 ## Test Data
 
-`test-data.csv` contains 100 companies across 16 sectors over 3 financial years (2020-21 through 2022-23), ~300 rows total. Uses real company names from the ATO dataset with fictional sector and country values. Includes ~90 rows with blank Taxable Income and Tax Payable to test null handling. Tax rates vary from 5% to 40%.
+`test-data.csv` contains the top 200 companies (by 2023-24 total income) across 11 GICS sectors over 11 financial years (2013-14 through 2023-24), 1914 rows total. Uses real ATO corporate tax transparency data with GICS sector classifications (ASX listed company matching + manual LLM classification for unlisted entities). Sector names include ASX index abbreviations (e.g. "Materials (XMJ)"). ABN column preserved for future matching. Earlier years have fewer companies (143 in 2013-14) as the ATO reporting threshold captured fewer entities.

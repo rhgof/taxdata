@@ -4,7 +4,9 @@ TaxChart.FIELD_LABELS = {
   'Total Income': 'Total Income (Revenue)',
   'Taxable Income': 'Taxable Income',
   'Tax Payable': 'Tax Payable',
-  'Tax Rate': 'Tax Rate'
+  'Tax Rate': 'Tax Rate',
+  'Taxable Income Margin': 'Taxable Income Margin',
+  'Tax Revenue Rate': 'Tax Revenue Rate'
 };
 
 TaxChart.AXIS_PAIRS = [
@@ -18,7 +20,9 @@ TaxChart.SINGLE_METRICS = [
   { label: 'Total Income (Revenue)', field: 'Total Income' },
   { label: 'Taxable Income', field: 'Taxable Income' },
   { label: 'Tax Payable', field: 'Tax Payable' },
-  { label: 'Tax Rate', field: 'Tax Rate' }
+  { label: 'Tax Rate', field: 'Tax Rate' },
+  { label: 'Taxable Income Margin', field: 'Taxable Income Margin' },
+  { label: 'Tax Revenue Rate', field: 'Tax Revenue Rate' }
 ];
 
 TaxChart.MODES = ['scatter', 'trails', 'bar', 'line'];
@@ -80,7 +84,7 @@ TaxChart.init = function(containerSelector) {
 
 // Compute fixed axis ranges separately for company and sector data
 TaxChart.computeAxisRanges = function() {
-  var fields = ['Total Income', 'Taxable Income', 'Tax Payable', 'Tax Rate'];
+  var fields = ['Total Income', 'Taxable Income', 'Tax Payable', 'Tax Rate', 'Taxable Income Margin', 'Tax Revenue Rate'];
 
   function computeRanges(rows) {
     var ranges = {};
