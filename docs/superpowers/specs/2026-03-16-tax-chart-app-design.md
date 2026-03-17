@@ -17,7 +17,7 @@ A browser-based interactive chart app that visualizes Australian corporate tax t
 | Company | string | Entity name |
 | Country of Ultimate Owner | string | Shown in hover tooltips |
 | Sector | string | Used for grouping, filtering, coloring |
-| Total Income | number | Revenue; displayed as "Revenue" in dropdown labels |
+| Total Income | number | Displayed as "Total Income (Revenue)" throughout the app |
 | Taxable Income | number | May be null/blank (ATO rules: not reported when zero or negative) |
 | Tax Payable | number | May be null/blank (same rules) |
 | Financial Year | string | e.g. "2022-23" |
@@ -27,7 +27,7 @@ Field names in axis labels use a display-name map (`FIELD_LABELS`) so dropdown l
 
 ```js
 TaxChart.FIELD_LABELS = {
-  'Total Income': 'Revenue',
+  'Total Income': 'Total Income (Revenue)',
   'Taxable Income': 'Taxable Income',
   'Tax Payable': 'Tax Payable',
   'Tax Rate': 'Tax Rate'
@@ -56,6 +56,7 @@ When viewing by sector:
 - Same axis pair selection as scatter
 - All available financial years plotted per company/sector
 - Points connected chronologically with lines (`mode: 'lines+markers'`)
+- Most recent year shown as filled circle (size 10); prior years as open/hollow circles (size 8)
 - Year slider hidden
 
 ### 3. Bar Chart
@@ -79,8 +80,8 @@ Defined in a config array, easily extensible:
 
 ```js
 TaxChart.AXIS_PAIRS = [
-  { label: 'Revenue vs Tax Payable', x: 'Total Income', y: 'Tax Payable' },
-  { label: 'Revenue vs Taxable Income', x: 'Total Income', y: 'Taxable Income' },
+  { label: 'Total Income (Revenue) vs Tax Payable', x: 'Total Income', y: 'Tax Payable' },
+  { label: 'Total Income (Revenue) vs Taxable Income', x: 'Total Income', y: 'Taxable Income' },
   { label: 'Taxable Income vs Tax Payable', x: 'Taxable Income', y: 'Tax Payable' },
   { label: 'Taxable Income vs Tax Rate', x: 'Taxable Income', y: 'Tax Rate' }
 ];
@@ -99,13 +100,14 @@ TaxChart.SINGLE_METRICS = [
 
 ## UI Layout
 
-The app fills the viewport height (`100vh`) with a flex column layout, no scrolling on the page itself.
+The app fills 85% of the viewport height (`85vh`) with a flex column layout, no scrolling on the page itself.
 
 ### Top Controls Bar (left to right, wraps on narrow screens)
 - **Chart mode selector:** buttons — Scatter | Trails | Bar | Line (active state highlighted)
 - **Axis pair dropdown:** populated from config. In bar/line modes, switches to a single metric dropdown
 - **Year slider:** range input spanning min–max years in the data. Visible in scatter and bar modes, hidden in trails and line modes. Label shows current year.
 - **Sort descending checkbox:** visible only in bar chart mode
+- **Log scale toggles:** "Log X" and "Log Y" checkboxes to switch each axis to log10 scale independently. When log scale is active, gridlines appear at major powers of 10 (`dtick: 1`).
 
 ### Main Area (flex row)
 
@@ -115,9 +117,9 @@ The app fills the viewport height (`100vh`) with a flex column layout, no scroll
 
 #### Side Panel (right, 280px fixed width)
 - **View toggle:** "Companies" or "Sectors" buttons — switches the list and data grouping
-- **Sector dropdown** (companies view only): single dropdown that both filters the company list to a sector AND highlights that sector on the chart (other sectors fade to opacity 0.15). Selecting "All sectors" clears both filter and highlight.
+- **Sector multi-select dropdown** (companies view only): custom dropdown with checkboxes and colored sector swatches. All sectors are checked by default (label shows "All sectors"). Includes "Check all" and "Clear all" buttons at the top of the dropdown. Multiple sectors can be selected/deselected. Selecting a sector auto-selects all its companies; deselecting removes them. Label shows "All sectors", "No sectors", or "N of M sectors". All companies remain visible in the main list for manual cross-sector comparison.
 - **Search input:** filters the checkbox list as user types
-- **Select all / Clear all buttons:** select all currently visible (filtered) items, or clear all selections
+- **Select all checkbox:** checked by default (all companies selected on load). Syncs with sector dropdown: checking selects all sectors and companies, unchecking clears all sectors and companies.
 - **Checkbox list:** scrollable list filling remaining height, with color swatches matching sector colors. Selected items are pinned to the top of the list.
 
 ### Responsive (< 600px)
@@ -129,7 +131,7 @@ The app fills the viewport height (`100vh`) with a flex column layout, no scroll
 ## Interaction Flow
 
 1. Page loads → fetch CSV → parse → compute derived values → populate controls (year range, company/sector lists, axis pairs)
-2. Default state: scatter mode, first axis pair, latest year, no selections (empty chart with prompt "Select companies or sectors to begin")
+2. Default state: scatter mode, first axis pair, latest year, all companies and sectors selected
 3. User picks chart mode → controls adapt (show/hide year slider, switch axis pair dropdown to single metric for bar/line)
 4. User searches and selects companies/sectors → chart renders
 5. Changing axis pair, year, or mode re-renders with current selections preserved where possible
@@ -141,25 +143,34 @@ The app fills the viewport height (`100vh`) with a flex column layout, no scroll
 - Same colors used across all chart modes and views
 - Color swatches appear next to items in the checkbox list
 
-### Combined Sector Filter & Highlight
-- When viewing companies, a single "Sector:" dropdown both filters the company list and highlights that sector on the chart
-- Highlighting sets all non-matching sectors' traces to `opacity: 0.15`
-- Uses `Plotly.restyle` for efficient update without full redraw
+### Multi-Select Sector Filter
+- When viewing companies, a custom multi-select dropdown allows selecting one or more sectors
+- Each sector item shows a checkbox and colored swatch matching the sector color palette
+- "Check all" and "Clear all" buttons at top of dropdown for bulk operations
+- Selecting a sector checks all its companies in the main list; deselecting unchecks them
+- Select All checkbox syncs with sector dropdown (check = all sectors, uncheck = clear all)
+- All companies remain visible regardless of sector selection, enabling cross-sector comparison
 
 ### Sector Drill-Down
 - When viewing aggregated sector data in scatter or bar mode, clicking a sector data point:
   - Switches to company view
   - Pre-selects all companies in that sector
-  - Sets the sector filter dropdown to that sector
-  - Uses `_preserveSectorFilter` flag to prevent the filter from being reset during panel rebuild
+  - Checks only that sector in the multi-select dropdown
 
 ## Plotly Trace Mapping
 
 - Each selected company (or sector) becomes one Plotly trace
 - Trace color determined by sector color map
-- Hover tooltips show: company name, sector (if different from company), country of ultimate owner, x and y values (formatted), year
+- Hover tooltips show full details across all chart modes: company name, sector (if different from company), country of ultimate owner, all metrics (Total Income (Revenue), Taxable Income, Tax Payable, Tax Rate), and year. Tooltip background is semi-transparent (`rgba(255,255,255,0.85)`).
 - Value formatting: `$B`/`$M`/`$K` for currency, percentage for Tax Rate
 - Tax Rate axes use `.0%` tick format
+- Axis ranges are fixed to the global min/max of each variable, with 5% padding. Separate ranges are computed for company view (max across individual companies) and sector view (max across sector aggregates). This prevents axes from jumping as items are selected/deselected, and avoids inflated scales when switching between views.
+- Source attribution annotation ("Source: @deadinlongrun.bsky.social dd MMM YYYY") displayed bottom-right for scatter/trails, top-right for bar/line (to avoid being obscured by bars)
+- When no data is selected, an empty chart with axes is shown (no placeholder text message)
+
+## Future Enhancements
+
+- **Bar chart tooltip follows cursor:** Currently Plotly anchors bar chart tooltips to the top of the bar. A custom implementation using `plotly_hover` events and a manually positioned overlay div would allow tooltips to appear at the mouse cursor position instead.
 
 ## Error Handling
 
@@ -176,7 +187,7 @@ The app fills the viewport height (`100vh`) with a flex column layout, no scroll
 - Plotly.js 2.x loaded via CDN
 - All styles scoped with `.taxchart-` prefix to avoid leaking into host page
 - Self-contained within a `<div>` for embedding
-- Viewport-fit layout (`height: 100vh`, flex column, `overflow: hidden`)
+- Viewport-fit layout (`height: 85vh`, flex column, `overflow: hidden`)
 - Minimum supported width: 600px. Controls stack vertically on narrower screens
 
 ## File Structure
@@ -198,8 +209,13 @@ A global object `window.TaxChart.state` holding:
 - `yearIndex` — selected year index
 - `viewBy` — 'companies' or 'sectors'
 - `selected` — object of selected company/sector names (keys = names, values = true)
+- `selectedSectors` — object tracking which sectors are checked in the multi-select dropdown
 - `highlightSector` — sector to highlight (or null)
 - `sortDescending` — boolean for bar chart sorting
+- `logScaleX` — boolean for log10 x-axis
+- `logScaleY` — boolean for log10 y-axis
+- `axisRangesCompanies` — pre-computed min/max for each numeric field across company rows
+- `axisRangesSectors` — pre-computed min/max for each numeric field across sector aggregate rows
 - `rows` — parsed CSV data
 - `sectorRows` — aggregated sector data
 - `metadata` — sectors, companies, years, sectorColorMap, companySectorMap

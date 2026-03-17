@@ -3,7 +3,7 @@
   font-size: 14px;
   color: #333;
   max-width: 1200px;
-  height: 100vh;
+  height: 85vh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -162,6 +162,57 @@
   height: 10px;
   border-radius: 2px;
   vertical-align: middle;
+}
+
+.taxchart-sector-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.taxchart-sector-dropdown-btn {
+  padding: 4px 8px;
+  font-size: 13px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  background: #fff;
+  cursor: pointer;
+  min-width: 140px;
+  text-align: left;
+}
+
+.taxchart-sector-dropdown-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 100;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  max-height: 250px;
+  overflow-y: auto;
+  min-width: 220px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.taxchart-sector-dropdown-btnrow {
+  display: flex;
+  gap: 6px;
+  padding: 6px 8px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.taxchart-sector-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.taxchart-sector-dropdown-item:hover {
+  background: #f0f0f0;
 }
 
 @media (max-width: 600px) {

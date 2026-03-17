@@ -5,31 +5,20 @@ TaxChart.updateChart = function() {
   if (!el) return;
 
   var selectedNames = Object.keys(TaxChart.state.selected);
-  if (selectedNames.length === 0) {
-    Plotly.purge(el);
-    el.innerHTML = '<p class="taxchart-prompt">Select companies or sectors to begin</p>';
-    return;
-  }
-
   var mode = TaxChart.state.mode;
-  var traces;
+  var traces = [];
 
-  if (mode === 'scatter') {
-    traces = TaxChart.buildScatterTraces();
-  } else if (mode === 'trails') {
-    traces = TaxChart.buildTrailsTraces();
-  } else if (mode === 'bar') {
-    traces = TaxChart.buildBarTraces();
-  } else if (mode === 'line') {
-    traces = TaxChart.buildLineTraces();
-  }
-
-  if (!traces || traces.length === 0) {
-    Plotly.purge(el);
-    var year = TaxChart.state.metadata.years[TaxChart.state.yearIndex];
-    el.innerHTML = '<p class="taxchart-prompt">No data for current selection' +
-      (mode === 'scatter' || mode === 'bar' ? ' (' + year + ')' : '') + '</p>';
-    return;
+  if (selectedNames.length > 0) {
+    if (mode === 'scatter') {
+      traces = TaxChart.buildScatterTraces();
+    } else if (mode === 'trails') {
+      traces = TaxChart.buildTrailsTraces();
+    } else if (mode === 'bar') {
+      traces = TaxChart.buildBarTraces();
+    } else if (mode === 'line') {
+      traces = TaxChart.buildLineTraces();
+    }
+    if (!traces) traces = [];
   }
 
   var layout = TaxChart.buildLayout();
@@ -70,7 +59,7 @@ TaxChart.getOpacity = function(name) {
   return sector === hl ? 1 : 0.15;
 };
 
-TaxChart.buildTooltip = function(row, xField, yField) {
+TaxChart.buildFullTooltip = function(row) {
   var parts = [row['Company']];
   if (row['Sector'] && row['Company'] !== row['Sector']) {
     parts.push('Sector: ' + row['Sector']);
@@ -78,10 +67,16 @@ TaxChart.buildTooltip = function(row, xField, yField) {
   if (row['Country of Ultimate Owner']) {
     parts.push('Country: ' + row['Country of Ultimate Owner']);
   }
-  parts.push(xField + ': ' + TaxChart.formatValue(row[xField], xField));
-  parts.push(yField + ': ' + TaxChart.formatValue(row[yField], yField));
+  parts.push('Total Income (Revenue): ' + TaxChart.formatValue(row['Total Income'], 'Total Income'));
+  parts.push('Taxable Income: ' + TaxChart.formatValue(row['Taxable Income'], 'Taxable Income'));
+  parts.push('Tax Payable: ' + TaxChart.formatValue(row['Tax Payable'], 'Tax Payable'));
+  parts.push('Tax Rate: ' + TaxChart.formatValue(row['Tax Rate'], 'Tax Rate'));
   parts.push('Year: ' + row['Financial Year']);
   return parts.join('<br>');
+};
+
+TaxChart.buildTooltip = function(row, xField, yField) {
+  return TaxChart.buildFullTooltip(row);
 };
 
 TaxChart.formatValue = function(val, field) {
@@ -119,7 +114,7 @@ TaxChart.buildScatterTraces = function() {
         size: 10,
         opacity: TaxChart.getOpacity(name)
       },
-      text: [TaxChart.buildTooltip(row, pair.x, pair.y)],
+      text: [TaxChart.buildFullTooltip(row)],
       hoverinfo: 'text'
     });
   });
@@ -132,6 +127,7 @@ TaxChart.buildTrailsTraces = function() {
   var rows = TaxChart.getActiveRows();
   var selectedNames = Object.keys(TaxChart.state.selected);
   var years = TaxChart.state.metadata.years;
+  var latestYear = years[years.length - 1];
   var traces = [];
 
   selectedNames.forEach(function(name) {
@@ -142,12 +138,20 @@ TaxChart.buildTrailsTraces = function() {
       return years.indexOf(a['Financial Year']) - years.indexOf(b['Financial Year']);
     });
 
-    var x = [], y = [], texts = [];
+    var x = [], y = [], texts = [], symbols = [], sizes = [];
     companyRows.forEach(function(row) {
       if (row[pair.x] === null || row[pair.y] === null) return;
       x.push(row[pair.x]);
       y.push(row[pair.y]);
-      texts.push(TaxChart.buildTooltip(row, pair.x, pair.y));
+      texts.push(TaxChart.buildFullTooltip(row));
+      // Filled circle for latest year, open circle for prior
+      if (row['Financial Year'] === latestYear) {
+        symbols.push('circle');
+        sizes.push(10);
+      } else {
+        symbols.push('circle-open');
+        sizes.push(8);
+      }
     });
 
     if (x.length === 0) return;
@@ -159,7 +163,12 @@ TaxChart.buildTrailsTraces = function() {
       type: 'scatter',
       name: name,
       line: { color: TaxChart.getColor(name) },
-      marker: { color: TaxChart.getColor(name), size: 8 },
+      marker: {
+        color: TaxChart.getColor(name),
+        size: sizes,
+        symbol: symbols,
+        line: { color: TaxChart.getColor(name), width: 2 }
+      },
       opacity: TaxChart.getOpacity(name),
       text: texts,
       hoverinfo: 'text'
@@ -202,7 +211,7 @@ TaxChart.buildBarTraces = function() {
         color: TaxChart.getColor(item.name),
         opacity: TaxChart.getOpacity(item.name)
       },
-      hovertext: [item.name + '<br>' + metric.label + ': ' + TaxChart.formatValue(item.value, metric.field)],
+      hovertext: [TaxChart.buildFullTooltip(item.row)],
       hoverinfo: 'text',
       textposition: 'none'
     });
@@ -231,7 +240,7 @@ TaxChart.buildLineTraces = function() {
       if (row[metric.field] === null) return;
       x.push(row['Financial Year']);
       y.push(row[metric.field]);
-      texts.push(row['Company'] + '<br>' + metric.label + ': ' + TaxChart.formatValue(row[metric.field], metric.field));
+      texts.push(TaxChart.buildFullTooltip(row));
     });
 
     if (x.length === 0) return;
@@ -253,30 +262,81 @@ TaxChart.buildLineTraces = function() {
   return traces;
 };
 
+TaxChart.getAxisRange = function(field, isLog) {
+  var ranges = TaxChart.state.viewBy === 'sectors'
+    ? TaxChart.state.axisRangesSectors
+    : TaxChart.state.axisRangesCompanies;
+  var r = ranges ? ranges[field] : null;
+  if (!r) return undefined;
+  if (isLog) {
+    var logMin = r.min > 0 ? Math.log10(r.min) : 0;
+    var logMax = r.max > 0 ? Math.log10(r.max) : 1;
+    var pad = (logMax - logMin) * 0.05;
+    return [logMin - pad, logMax + pad];
+  }
+  var pad = (r.max - r.min) * 0.05;
+  return [Math.max(0, r.min - pad), r.max + pad];
+};
+
 TaxChart.buildLayout = function() {
   var mode = TaxChart.state.mode;
+  var now = new Date();
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var dateStr = now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
+
   var layout = {
     margin: { t: 30, r: 30, b: (mode === 'bar' ? 150 : 50), l: 70 },
     showlegend: false,
-    hovermode: 'closest'
+    hovermode: 'closest',
+    hoverlabel: { bgcolor: 'rgba(255,255,255,0.85)', bordercolor: '#ccc', font: { color: '#333' } },
+    annotations: [{
+      text: 'Source: @deadinlongrun.bsky.social ' + dateStr,
+      xref: 'paper', yref: 'paper',
+      x: 1,
+      y: (mode === 'bar' || mode === 'line') ? 1 : 0,
+      xanchor: 'right',
+      yanchor: (mode === 'bar' || mode === 'line') ? 'top' : 'bottom',
+      showarrow: false,
+      font: { size: 10, color: '#bbb' }
+    }]
   };
 
   if (mode === 'scatter' || mode === 'trails') {
     var pair = TaxChart.AXIS_PAIRS[TaxChart.state.axisPairIndex];
     var labels = TaxChart.FIELD_LABELS;
-    layout.xaxis = { title: labels[pair.x] || pair.x };
-    layout.yaxis = { title: labels[pair.y] || pair.y };
+    layout.xaxis = {
+      title: labels[pair.x] || pair.x,
+      type: TaxChart.state.logScaleX ? 'log' : 'linear',
+      range: TaxChart.getAxisRange(pair.x, TaxChart.state.logScaleX)
+    };
+    layout.yaxis = {
+      title: labels[pair.y] || pair.y,
+      type: TaxChart.state.logScaleY ? 'log' : 'linear',
+      range: TaxChart.getAxisRange(pair.y, TaxChart.state.logScaleY)
+    };
+    // Log scale: gridlines on powers of 10
+    if (TaxChart.state.logScaleX) layout.xaxis.dtick = 1;
+    if (TaxChart.state.logScaleY) layout.yaxis.dtick = 1;
     if (pair.x === 'Tax Rate') layout.xaxis.tickformat = '.0%';
     if (pair.y === 'Tax Rate') layout.yaxis.tickformat = '.0%';
   } else {
     var metric = TaxChart.SINGLE_METRICS[TaxChart.state.metricIndex];
     if (mode === 'bar') {
       layout.xaxis = { title: '', categoryorder: 'trace', tickangle: -45 };
-      layout.yaxis = { title: metric.label };
+      layout.yaxis = {
+        title: metric.label,
+        type: TaxChart.state.logScaleY ? 'log' : 'linear',
+        range: TaxChart.getAxisRange(metric.field, TaxChart.state.logScaleY)
+      };
     } else {
       layout.xaxis = { title: 'Financial Year' };
-      layout.yaxis = { title: metric.label };
+      layout.yaxis = {
+        title: metric.label,
+        type: TaxChart.state.logScaleY ? 'log' : 'linear',
+        range: TaxChart.getAxisRange(metric.field, TaxChart.state.logScaleY)
+      };
     }
+    if (TaxChart.state.logScaleY) layout.yaxis.dtick = 1;
     if (metric.field === 'Tax Rate') layout.yaxis.tickformat = '.0%';
   }
 
@@ -316,11 +376,13 @@ TaxChart.handleDrillDown = function(eventData) {
   var sectorName = pointData.data.name || pointData.x;
   if (!sectorName) return;
 
-  // Switch to companies view, filtered by this sector
+  // Switch to companies view, select companies in this sector
   TaxChart.state.viewBy = 'companies';
   TaxChart.state.selected = {};
+  TaxChart.state.selectedSectors = {};
+  TaxChart.state.selectedSectors[sectorName] = true;
+  TaxChart.state.highlightSector = null;
 
-  // Select all companies in this sector
   var companiesInSector = TaxChart.state.metadata.companies.filter(function(c) {
     return TaxChart.state.metadata.companySectorMap[c] === sectorName;
   });
@@ -328,14 +390,8 @@ TaxChart.handleDrillDown = function(eventData) {
     TaxChart.state.selected[c] = true;
   });
 
-  // Set sector filter BEFORE building the panel so the dropdown and list are in sync
-  TaxChart._sectorFilter = sectorName;
-  TaxChart._preserveSectorFilter = true;
+  TaxChart._sectorFilter = '';
   TaxChart.buildSidePanel();
-
-  // Now set the sector filter dropdown to match
-  var sectorDropdown = TaxChart.elements.sidePanel.querySelector('.taxchart-select');
-  if (sectorDropdown) sectorDropdown.value = sectorName;
   TaxChart.updateCheckboxList();
   TaxChart.updateChart();
 };
