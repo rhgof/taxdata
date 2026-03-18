@@ -2,6 +2,10 @@
 
 An interactive browser-based chart app for exploring Australian corporate tax transparency data.
 
+## Live demo
+
+[**Open the interactive chart**](https://rhgof.github.io/taxdata/)
+
 ## Running locally
 
 The app uses `fetch()` to load CSV data, so it must be served over HTTP (not opened directly as a file).

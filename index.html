@@ -4,13 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Corporate Tax Data Explorer</title>
+  <!-- Plotly.js for chart rendering (no build step required) -->
   <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
   <link rel="stylesheet" href="styles.css">
   <style>body { margin: 0; padding: 8px; }</style>
 </head>
 <body>
+  <!-- Container: data-csv-url tells the app where to fetch the CSV data -->
   <div id="tax-chart" class="taxchart" data-csv-url="test-data.csv"></div>
 
+  <!-- Load order matters: data.js (parsing) → charts.js (rendering) → controls.js (UI + init) -->
   <script src="data.js"></script>
   <script src="charts.js"></script>
   <script src="controls.js"></script>

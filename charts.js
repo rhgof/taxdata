@@ -1,5 +1,15 @@
+/**
+ * charts.js — Plotly chart rendering for TaxChart.
+ *
+ * Responsibilities:
+ *   - Build Plotly traces for each chart mode (scatter, trails, bar, line)
+ *   - Construct layout with axes, log scale, fixed ranges, and annotations
+ *   - Handle sector highlighting (opacity via restyle, no full redraw)
+ *   - Sector drill-down: click a sector to switch to its companies
+ */
 window.TaxChart = window.TaxChart || {};
 
+// Main entry point: rebuild the chart based on current state
 TaxChart.updateChart = function() {
   var el = document.getElementById('taxchart-plot');
   if (!el) return;
@@ -30,6 +40,7 @@ TaxChart.updateChart = function() {
   }
 };
 
+// Return company-level or sector-aggregated rows depending on current view
 TaxChart.getActiveRows = function() {
   if (TaxChart.state.viewBy === 'sectors') {
     return TaxChart.state.sectorRows;
@@ -37,6 +48,7 @@ TaxChart.getActiveRows = function() {
   return TaxChart.state.rows;
 };
 
+// Look up the sector color for a company or sector name
 TaxChart.getColor = function(name) {
   var sector;
   if (TaxChart.state.viewBy === 'sectors') {
@@ -47,6 +59,7 @@ TaxChart.getColor = function(name) {
   return TaxChart.state.metadata.sectorColorMap[sector] || '#999';
 };
 
+// Dim non-highlighted sectors to 15% opacity when a sector is highlighted
 TaxChart.getOpacity = function(name) {
   var hl = TaxChart.state.highlightSector;
   if (!hl) return 1;
@@ -59,6 +72,7 @@ TaxChart.getOpacity = function(name) {
   return sector === hl ? 1 : 0.15;
 };
 
+// Build an HTML tooltip showing all metrics for a data point
 TaxChart.buildFullTooltip = function(row) {
   var parts = [row['Company']];
   if (row['Sector'] && row['Company'] !== row['Sector']) {
@@ -81,6 +95,7 @@ TaxChart.buildTooltip = function(row, xField, yField) {
   return TaxChart.buildFullTooltip(row);
 };
 
+// Format a value for display: percentages for ratios, $B/$M/$K for dollar amounts
 TaxChart.formatValue = function(val, field) {
   if (val === null || val === undefined) return 'N/A';
   if (field === 'Tax Rate' || field === 'Taxable Income Margin' || field === 'Tax Revenue Rate') return (val * 100).toFixed(1) + '%';
@@ -90,6 +105,7 @@ TaxChart.formatValue = function(val, field) {
   return '$' + val.toFixed(0);
 };
 
+// Scatter mode: one marker per selected entity for the chosen year and axis pair
 TaxChart.buildScatterTraces = function() {
   var pair = TaxChart.AXIS_PAIRS[TaxChart.state.axisPairIndex];
   var year = TaxChart.state.metadata.years[TaxChart.state.yearIndex];
@@ -124,6 +140,8 @@ TaxChart.buildScatterTraces = function() {
   return traces;
 };
 
+// Trails mode: lines+markers across all years per entity.
+// Latest year = filled circle, prior years = open circles.
 TaxChart.buildTrailsTraces = function() {
   var pair = TaxChart.AXIS_PAIRS[TaxChart.state.axisPairIndex];
   var rows = TaxChart.getActiveRows();
@@ -180,6 +198,8 @@ TaxChart.buildTrailsTraces = function() {
   return traces;
 };
 
+// Bar mode: one bar per entity for a single metric and year.
+// One trace per entity so each gets its own sector color.
 TaxChart.buildBarTraces = function() {
   var metric = TaxChart.SINGLE_METRICS[TaxChart.state.metricIndex];
   var year = TaxChart.state.metadata.years[TaxChart.state.yearIndex];
@@ -222,6 +242,7 @@ TaxChart.buildBarTraces = function() {
   return traces;
 };
 
+// Line mode: one line per entity showing a single metric across all years
 TaxChart.buildLineTraces = function() {
   var metric = TaxChart.SINGLE_METRICS[TaxChart.state.metricIndex];
   var rows = TaxChart.getActiveRows();
@@ -264,6 +285,8 @@ TaxChart.buildLineTraces = function() {
   return traces;
 };
 
+// Compute axis range with 5% padding. Uses separate min/max for company vs sector view.
+// For log scale, pads in log-space so the padding is proportional.
 TaxChart.getAxisRange = function(field, isLog) {
   var ranges = TaxChart.state.viewBy === 'sectors'
     ? TaxChart.state.axisRangesSectors
@@ -280,6 +303,7 @@ TaxChart.getAxisRange = function(field, isLog) {
   return [Math.max(0, r.min - pad), r.max + pad];
 };
 
+// Build the Plotly layout: axes, tick formatting, log scale, and source annotation
 TaxChart.buildLayout = function() {
   var mode = TaxChart.state.mode;
   var now = new Date();

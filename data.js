@@ -1,7 +1,18 @@
+/**
+ * data.js — Data loading, parsing, and transformation for TaxChart.
+ *
+ * Responsibilities:
+ *   - Fetch and parse CSV data (with quoted-field support)
+ *   - Compute derived metrics (Tax Rate, Taxable Income Margin, Tax Revenue Rate)
+ *   - Aggregate company rows into sector-level summaries
+ *   - Build metadata (unique sectors, companies, years, color map)
+ */
 window.TaxChart = window.TaxChart || {};
 
+// Fields that should be parsed as numbers (nulls preserved for missing/blank values)
 TaxChart.NUMERIC_FIELDS = ['Total Income', 'Taxable Income', 'Tax Payable'];
 
+// Fetch CSV from URL and return parsed rows
 TaxChart.loadData = function(url) {
   return fetch(url)
     .then(function(response) {
@@ -13,6 +24,8 @@ TaxChart.loadData = function(url) {
     });
 };
 
+// Parse CSV text into an array of row objects.
+// Numeric fields are converted to Number or null; all others remain strings.
 TaxChart.parseCSV = function(text) {
   var lines = text.trim().split('\n');
   var headers = lines[0].split(',').map(function(h) { return h.trim(); });
@@ -39,6 +52,7 @@ TaxChart.parseCSV = function(text) {
   return rows;
 };
 
+// Split a single CSV line respecting quoted fields (handles commas inside quotes)
 TaxChart.splitCSVLine = function(line) {
   var result = [];
   var current = '';
@@ -58,6 +72,11 @@ TaxChart.splitCSVLine = function(line) {
   return result;
 };
 
+// Derived metrics computed from raw ATO fields.
+// Each returns a ratio (displayed as percentage) or null if inputs are missing/zero.
+//   Tax Rate             = Tax Payable / Taxable Income
+//   Taxable Income Margin = Taxable Income / Total Income
+//   Tax Revenue Rate      = Tax Payable / Total Income
 TaxChart.DERIVED_FIELDS = [
   {
     name: 'Tax Rate',
@@ -88,6 +107,7 @@ TaxChart.DERIVED_FIELDS = [
   }
 ];
 
+// Add derived fields to each row in-place
 TaxChart.computeDerived = function(rows) {
   rows.forEach(function(row) {
     TaxChart.DERIVED_FIELDS.forEach(function(field) {
@@ -97,6 +117,9 @@ TaxChart.computeDerived = function(rows) {
   return rows;
 };
 
+// Aggregate company-level rows into sector totals, grouped by sector + financial year.
+// Tracks whether any non-null Taxable Income / Tax Payable existed to avoid
+// reporting zero when the real value is unknown (ATO suppression rules).
 TaxChart.aggregateBySector = function(rows) {
   var groups = {};
 
@@ -141,6 +164,7 @@ TaxChart.aggregateBySector = function(rows) {
   return result;
 };
 
+// D3 category20-style palette for sector colors (wraps if >20 sectors)
 TaxChart.SECTOR_COLORS = [
   '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
   '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf',
@@ -148,6 +172,8 @@ TaxChart.SECTOR_COLORS = [
   '#c49c94', '#f7b6d2', '#c7c7c7', '#dbdb8d', '#9edae5'
 ];
 
+// Extract sorted unique sectors, companies, and years from the data.
+// Builds sector→color and company→sector lookup maps.
 TaxChart.buildMetadata = function(rows) {
   var sectors = [];
   var companies = [];

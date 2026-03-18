@@ -1,5 +1,17 @@
+/**
+ * controls.js — UI controls and state management for TaxChart.
+ *
+ * Responsibilities:
+ *   - Configuration constants (field labels, axis pairs, metrics, modes)
+ *   - Application state (selections, view mode, axis/metric indices, log scale)
+ *   - Initialization: fetch data, compute derived fields, render app shell
+ *   - Top bar: chart mode buttons, axis/metric dropdown, year slider, log toggles
+ *   - Side panel: company/sector toggle, multi-select sector dropdown, search,
+ *     select-all checkbox, scrollable checkbox list with colored swatches
+ */
 window.TaxChart = window.TaxChart || {};
 
+// Display labels for fields (e.g. "Total Income" → "Total Income (Revenue)")
 TaxChart.FIELD_LABELS = {
   'Total Income': 'Total Income (Revenue)',
   'Taxable Income': 'Taxable Income',
@@ -9,6 +21,7 @@ TaxChart.FIELD_LABELS = {
   'Tax Revenue Rate': 'Tax Revenue Rate'
 };
 
+// Pre-defined X/Y axis pairs for scatter and trails modes
 TaxChart.AXIS_PAIRS = [
   { label: 'Total Income (Revenue) vs Tax Payable', x: 'Total Income', y: 'Tax Payable' },
   { label: 'Total Income (Revenue) vs Taxable Income', x: 'Total Income', y: 'Taxable Income' },
@@ -16,6 +29,7 @@ TaxChart.AXIS_PAIRS = [
   { label: 'Taxable Income vs Tax Rate', x: 'Taxable Income', y: 'Tax Rate' }
 ];
 
+// Single-metric options for bar and line modes
 TaxChart.SINGLE_METRICS = [
   { label: 'Total Income (Revenue)', field: 'Total Income' },
   { label: 'Taxable Income', field: 'Taxable Income' },
@@ -27,6 +41,7 @@ TaxChart.SINGLE_METRICS = [
 
 TaxChart.MODES = ['scatter', 'trails', 'bar', 'line'];
 
+// Global application state — mutated by controls, read by chart builders
 TaxChart.state = {
   mode: 'scatter',
   axisPairIndex: 0,
@@ -44,6 +59,8 @@ TaxChart.state = {
   metadata: null
 };
 
+// Initialize the app: find container, load CSV from data-csv-url attribute,
+// compute derived fields and metadata, then render the full UI.
 TaxChart.init = function(containerSelector) {
   var container = document.querySelector(containerSelector);
   if (!container) {
@@ -106,6 +123,7 @@ TaxChart.computeAxisRanges = function() {
   TaxChart.state.axisRangesSectors = computeRanges(TaxChart.state.sectorRows);
 };
 
+// Build the app shell: top control bar + main area (chart + side panel)
 TaxChart.renderApp = function() {
   var container = TaxChart.container;
   container.innerHTML = '';
@@ -140,6 +158,8 @@ TaxChart.renderApp = function() {
   TaxChart.updateChart();
 };
 
+// Build the top control bar: mode buttons, axis/metric dropdown, year slider,
+// sort toggle (bar only), and log scale checkboxes.
 TaxChart.buildTopControls = function() {
   var bar = TaxChart.elements.topBar;
   bar.innerHTML = '';
@@ -286,6 +306,8 @@ TaxChart.buildTopControls = function() {
   bar.appendChild(logGroup);
 };
 
+// Build the side panel: companies/sectors toggle, sector filter dropdown
+// (companies view only), search box, select-all, and scrollable checkbox list.
 TaxChart.buildSidePanel = function() {
   var panel = TaxChart.elements.sidePanel;
   panel.innerHTML = '';
@@ -512,6 +534,7 @@ TaxChart.buildSidePanel = function() {
   TaxChart.updateCheckboxList();
 };
 
+// Get the list of items (companies or sectors) filtered by the current search term
 TaxChart.getVisibleItems = function() {
   var items;
   if (TaxChart.state.viewBy === 'companies') {
@@ -529,6 +552,8 @@ TaxChart.getVisibleItems = function() {
   return items;
 };
 
+// Rebuild the checkbox list. Selected items are pinned to the top.
+// Also syncs the select-all checkbox state.
 TaxChart.updateCheckboxList = function() {
   var listEl = document.getElementById('taxchart-list');
   if (!listEl) return;
