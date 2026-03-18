@@ -355,7 +355,7 @@ TaxChart.buildLayout = function() {
         range: TaxChart.getAxisRange(metric.field, TaxChart.state.logScaleY)
       };
     } else {
-      layout.xaxis = { title: 'Financial Year' };
+      layout.xaxis = { title: 'Financial Year', type: 'category', categoryorder: 'array', categoryarray: TaxChart.state.metadata.years };
       layout.yaxis = {
         title: metric.label,
         type: TaxChart.state.logScaleY ? 'log' : 'linear',
