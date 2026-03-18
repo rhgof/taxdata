@@ -218,7 +218,12 @@ TaxChart.buildBarTraces = function() {
   });
 
   if (TaxChart.state.sortDescending) {
-    items.sort(function(a, b) { return b.value - a.value; });
+    var sortField = TaxChart.state.sortField;
+    items.sort(function(a, b) {
+      var aVal = a.row[sortField] !== null && a.row[sortField] !== undefined ? a.row[sortField] : -Infinity;
+      var bVal = b.row[sortField] !== null && b.row[sortField] !== undefined ? b.row[sortField] : -Infinity;
+      return bVal - aVal;
+    });
   }
 
   // One trace per entity so each gets a legend entry

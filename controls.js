@@ -26,7 +26,8 @@ TaxChart.AXIS_PAIRS = [
   { label: 'Total Income (Revenue) vs Tax Payable', x: 'Total Income', y: 'Tax Payable' },
   { label: 'Total Income (Revenue) vs Taxable Income', x: 'Total Income', y: 'Taxable Income' },
   { label: 'Taxable Income vs Tax Payable', x: 'Taxable Income', y: 'Tax Payable' },
-  { label: 'Taxable Income vs Tax Rate', x: 'Taxable Income', y: 'Tax Rate' }
+  { label: 'Taxable Income vs Tax Rate', x: 'Taxable Income', y: 'Tax Rate' },
+  { label: 'Total Income (Revenue) vs Tax Revenue Rate', x: 'Total Income', y: 'Tax Revenue Rate' }
 ];
 
 // Single-metric options for bar and line modes
@@ -52,6 +53,7 @@ TaxChart.state = {
   selectedSectors: {},
   highlightSector: null,
   sortDescending: false,
+  sortField: 'Total Income',
   logScaleX: false,
   logScaleY: false,
   rows: [],
@@ -254,7 +256,7 @@ TaxChart.buildTopControls = function() {
     bar.appendChild(yearGroup);
   }
 
-  // Sort descending checkbox — bar mode only
+  // Sort controls — bar mode only: descending checkbox + sort-by dropdown
   if (TaxChart.state.mode === 'bar') {
     var sortGroup = document.createElement('div');
     sortGroup.className = 'taxchart-control-group';
@@ -268,8 +270,23 @@ TaxChart.buildTopControls = function() {
       TaxChart.updateChart();
     });
     sortLabel.appendChild(sortCheck);
-    sortLabel.appendChild(document.createTextNode(' Sort descending'));
+    sortLabel.appendChild(document.createTextNode(' Sort by:'));
     sortGroup.appendChild(sortLabel);
+
+    var sortSelect = document.createElement('select');
+    sortSelect.className = 'taxchart-select';
+    TaxChart.SINGLE_METRICS.forEach(function(m) {
+      var opt = document.createElement('option');
+      opt.value = m.field;
+      opt.textContent = m.label;
+      opt.selected = (m.field === TaxChart.state.sortField);
+      sortSelect.appendChild(opt);
+    });
+    sortSelect.addEventListener('change', function() {
+      TaxChart.state.sortField = this.value;
+      if (TaxChart.state.sortDescending) TaxChart.updateChart();
+    });
+    sortGroup.appendChild(sortSelect);
     bar.appendChild(sortGroup);
   }
 
