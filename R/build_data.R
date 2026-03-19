@@ -49,9 +49,16 @@ for (f in xlsx_files) {
 
   df <- read_excel(f, sheet = sheet)
 
-  # Normalise column names: lowercase for matching
+  # Some files (e.g. 2013-14) have a title row before the actual headers.
+  # Detect by checking if first column name looks like a header ("name") or not.
   orig_names <- colnames(df)
   lower_names <- tolower(orig_names)
+  if (length(grep("^name$", lower_names)) == 0 && nrow(df) > 0) {
+    # Title row detected — re-read with skip = 1
+    df <- read_excel(f, sheet = sheet, skip = 1)
+    orig_names <- colnames(df)
+    lower_names <- tolower(orig_names)
+  }
 
   # Find columns by pattern (case-insensitive)
   name_col <- orig_names[grep("^name$", lower_names)]
