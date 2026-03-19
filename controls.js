@@ -173,18 +173,29 @@ TaxChart.applyDataFilters = function() {
   TaxChart.state.sectorRows = TaxChart.aggregateBySector(filtered);
 };
 
-// Reapply data filters and rebuild the full UI (called when ASX/TopN change)
+// Reapply data filters and rebuild the full UI (called when ASX/TopN change).
+// Preserves sector and company selections where they still exist in the new data.
 TaxChart.rebuildAfterFilter = function() {
   TaxChart.applyDataFilters();
-  // Reset selections to all visible companies/sectors
-  TaxChart.state.selected = {};
-  TaxChart.state.metadata.companies.forEach(function(c) {
-    TaxChart.state.selected[c] = true;
-  });
+
+  // Preserve existing sector selections, remove sectors no longer in data
+  var oldSectors = TaxChart.state.selectedSectors;
   TaxChart.state.selectedSectors = {};
   TaxChart.state.metadata.sectors.forEach(function(s) {
-    TaxChart.state.selectedSectors[s] = true;
+    if (oldSectors[s]) TaxChart.state.selectedSectors[s] = true;
   });
+
+  // Rebuild company selections based on preserved sector selections
+  var oldSelected = TaxChart.state.selected;
+  TaxChart.state.selected = {};
+  TaxChart.state.metadata.companies.forEach(function(c) {
+    var sector = TaxChart.state.metadata.companySectorMap[c];
+    // Keep if sector is still selected, or if previously individually selected
+    if (TaxChart.state.selectedSectors[sector] || oldSelected[c]) {
+      TaxChart.state.selected[c] = true;
+    }
+  });
+
   TaxChart.computeAxisRanges();
   TaxChart.buildSidePanel();
   TaxChart.syncSectorUI();
