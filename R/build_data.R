@@ -104,6 +104,17 @@ combined <- bind_rows(all_data)
 message("Total rows across all years: ", nrow(combined))
 
 # ---------------------------------------------------------------------------
+# 1b. Cleanse company names
+# ---------------------------------------------------------------------------
+
+combined <- combined %>%
+  mutate(
+    Company = str_replace(Company, "\\bLIMITED\\b", "LTD"),
+    Company = str_replace(Company, "\\bLTD\\.\\b", "LTD")
+  )
+message("Company names cleansed (LIMITED -> LTD, LTD. -> LTD)")
+
+# ---------------------------------------------------------------------------
 # 2. Select top 200 companies by 2023-24 Total Income
 # ---------------------------------------------------------------------------
 
@@ -116,13 +127,22 @@ top200 <- combined %>%
 message("Top 200 companies identified from 2023-24 data")
 
 # ---------------------------------------------------------------------------
-# 3. Match top 200 across all years by Company + ABN
+# 3. Match top 200 across all years by ABN
 # ---------------------------------------------------------------------------
 
+# Use ABN-only matching to handle companies that changed names over time.
+# Use the most recent (2023-24) name as the canonical company name.
 filtered <- combined %>%
-  inner_join(top200, by = c("Company", "ABN"))
+  filter(ABN %in% top200$ABN)
 
-message("Rows after filtering to top 200 across all years: ", nrow(filtered))
+# Replace historical company names with the canonical 2023-24 name
+canonical_names <- top200 %>% select(ABN, Canonical = Company)
+filtered <- filtered %>%
+  left_join(canonical_names, by = "ABN") %>%
+  mutate(Company = Canonical) %>%
+  select(-Canonical)
+
+message("Rows after ABN-matching top 200 across all years: ", nrow(filtered))
 
 # ---------------------------------------------------------------------------
 # 4. Sector enrichment
@@ -136,6 +156,7 @@ asx <- read_csv(file.path(input_dir, "ASXListedCompanies.csv"), skip = 1,
 normalise_name <- function(x) {
   x <- toupper(x)
   x <- str_replace_all(x, "[^A-Z0-9 ]", "")
+  x <- str_replace(x, "\\bLIMITED\\b", "LTD")
   x <- str_squish(x)
   x
 }
@@ -159,7 +180,13 @@ asx_lookup <- asx %>%
   mutate(Sector = as.character(Sector))
 
 # 4d. Read llm_classifications.json for fallback
-llm_sectors <- fromJSON(file.path(input_dir, "llm_classifications.json"))
+# Normalise keys to match cleansed company names (LIMITED -> LTD)
+llm_sectors_raw <- fromJSON(file.path(input_dir, "llm_classifications.json"))
+llm_keys <- names(llm_sectors_raw)
+llm_keys <- str_replace(llm_keys, "\\bLIMITED\\b", "LTD")
+llm_keys <- str_replace(llm_keys, "\\bLTD\\.\\b", "LTD")
+names(llm_sectors_raw) <- llm_keys
+llm_sectors <- llm_sectors_raw
 
 # 4e. Match companies to sectors
 filtered <- filtered %>%
@@ -177,6 +204,8 @@ filtered <- filtered %>%
 filtered <- filtered %>%
   mutate(
     llm_key = toupper(Company),
+    llm_key = str_replace(llm_key, "\\bLIMITED\\b", "LTD"),
+    llm_key = str_replace(llm_key, "\\bLTD\\.\\b", "LTD"),
     llm_sector = llm_sectors[llm_key],
     llm_sector = as.character(llm_sector),
     Sector = if_else(is.na(Sector) | Sector == "NULL", llm_sector, Sector),
