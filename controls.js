@@ -158,7 +158,7 @@ TaxChart.renderApp = function() {
 
   TaxChart.buildTopControls();
   TaxChart.buildSidePanel();
-  TaxChart.buildFloatingLegend();
+  // TaxChart.buildFloatingLegend();
   TaxChart.updateChart();
 };
 
