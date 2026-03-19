@@ -22,6 +22,8 @@ A browser-based interactive chart app that visualizes Australian corporate tax t
 | Taxable Income | number | May be null/blank (ATO rules: not reported when zero or negative) |
 | Tax Payable | number | May be null/blank (same rules) |
 | Financial Year | string | e.g. "2022-23" |
+| ASX Code | string | ASX ticker symbol (blank if not listed) |
+| Source | string | Source xlsx filename for provenance |
 
 ### Display Labels
 Field names in axis labels use a display-name map (`FIELD_LABELS`) so dropdown labels and axis titles are consistent:
@@ -239,4 +241,4 @@ The app is initialized by calling `TaxChart.init(containerSelector)`, which read
 
 ## Test Data
 
-`test-data.csv` contains the top 200 companies (by 2023-24 total income) across 11 GICS sectors over 11 financial years (2013-14 through 2023-24), 1914 rows total. Uses real ATO corporate tax transparency data with GICS sector classifications (ASX listed company matching + manual LLM classification for unlisted entities). Sector names include ASX index abbreviations (e.g. "Materials (XMJ)"). ABN column preserved for future matching. Earlier years have fewer companies (143 in 2013-14) as the ATO reporting threshold captured fewer entities.
+`test-data.csv` contains the top 200 companies (by 2023-24 total income) across 11 GICS sectors over 11 financial years (2013-14 through 2023-24), 2137 rows total. Uses real ATO corporate tax transparency data with GICS sector classifications (ASX listed company matching + manual LLM classification for unlisted entities). Sector names include ASX index abbreviations (e.g. "Materials (XMJ)"). ABN column preserved for future matching. Companies matched across years by ABN only (handles name changes like CALTEX→AMPOL) with canonical 2023-24 names. Company names cleansed (LIMITED→LTD). Earlier years have fewer companies (143 in 2013-14) as the ATO reporting threshold captured fewer entities.
