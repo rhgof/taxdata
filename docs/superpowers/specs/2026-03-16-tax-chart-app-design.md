@@ -23,6 +23,7 @@ A browser-based interactive chart app that visualizes Australian corporate tax t
 | Tax Payable | number | May be null/blank (same rules) |
 | Financial Year | string | e.g. "2022-23" |
 | ASX Code | string | ASX ticker symbol (blank if not listed) |
+| ASX Listed | boolean | TRUE if company is ASX-listed, empty otherwise |
 | Source | string | Source xlsx filename for provenance |
 
 ### Display Labels
@@ -116,6 +117,7 @@ The app fills 85% of the viewport height (`85vh`) with a flex column layout, no 
 - **Year slider:** range input spanning min–max years in the data. Visible in scatter and bar modes, hidden in trails and line modes. Label shows current year.
 - **Sort descending checkbox:** visible only in bar chart mode
 - **Log scale toggles:** "Log X" and "Log Y" checkboxes to switch each axis to log10 scale independently. When log scale is active, gridlines appear at major powers of 10 (`dtick: 1`).
+- **Data filters:** "ASX Listed" checkbox (default: on, filters to ~379 ASX-listed companies) and "Top N" dropdown (All / Top 100 / 200 / 500 / 1000 by total income in latest year). These compose with sector filters. Changing filters preserves existing sector/company selections where possible.
 
 ### Main Area (flex row)
 
@@ -138,8 +140,8 @@ The app fills 85% of the viewport height (`85vh`) with a flex column layout, no 
 
 ## Interaction Flow
 
-1. Page loads → fetch CSV → parse → compute derived values → populate controls (year range, company/sector lists, axis pairs)
-2. Default state: scatter mode, first axis pair, latest year, all companies and sectors selected
+1. Page loads → fetch CSV → parse → compute derived values → apply data filters (ASX Listed + Top N) → populate controls (year range, company/sector lists, axis pairs)
+2. Default state: scatter mode, first axis pair, latest year, ASX Listed on, Top N = All, all filtered companies and sectors selected
 3. User picks chart mode → controls adapt (show/hide year slider, switch axis pair dropdown to single metric for bar/line)
 4. User searches and selects companies/sectors → chart renders
 5. Changing axis pair, year, or mode re-renders with current selections preserved where possible
@@ -222,9 +224,12 @@ A global object `window.TaxChart.state` holding:
 - `sortDescending` — boolean for bar chart sorting
 - `logScaleX` — boolean for log10 x-axis
 - `logScaleY` — boolean for log10 y-axis
+- `asxOnly` — boolean for ASX Listed filter (default: true)
+- `topN` — number for Top N filter (0 = All, 100, 200, 500, 1000)
 - `axisRangesCompanies` — pre-computed min/max for each numeric field across company rows
 - `axisRangesSectors` — pre-computed min/max for each numeric field across sector aggregate rows
-- `rows` — parsed CSV data
+- `allRows` — all parsed CSV data (unfiltered)
+- `rows` — filtered CSV data (after ASX Listed + Top N)
 - `sectorRows` — aggregated sector data
 - `metadata` — sectors, companies, years, sectorColorMap, companySectorMap
 
@@ -241,4 +246,4 @@ The app is initialized by calling `TaxChart.init(containerSelector)`, which read
 
 ## Test Data
 
-`test-data.csv` contains the top 200 companies (by 2023-24 total income) across 11 GICS sectors over 11 financial years (2013-14 through 2023-24), 2137 rows total. Uses real ATO corporate tax transparency data with GICS sector classifications (ASX listed company matching + manual LLM classification for unlisted entities). Sector names include ASX index abbreviations (e.g. "Materials (XMJ)"). ABN column preserved for future matching. Companies matched across years by ABN only (handles name changes like CALTEX→AMPOL) with canonical 2023-24 names. Company names cleansed (LIMITED→LTD). Earlier years have fewer companies (143 in 2013-14) as the ATO reporting threshold captured fewer entities.
+`test-data.csv` contains all ~6,025 ATO corporate tax transparency entities across 11 GICS sectors over 11 financial years (2013-14 through 2023-24), ~28,554 rows total. Uses real ATO data with GICS sector classifications (ASX listed company matching + manual LLM classification for previously top-200 unlisted entities). ~379 companies are flagged as ASX-listed. Sector names include ASX index abbreviations (e.g. "Materials (XMJ)"). Companies matched across years by ABN with canonical names from the most recent year (handles name changes like CALTEX→AMPOL). Company names cleansed (LIMITED→LTD). Non-ASX companies outside the original top 200 may lack sector assignments. Earlier years have fewer entities as the ATO reporting threshold captured fewer.
