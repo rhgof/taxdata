@@ -115,34 +115,24 @@ combined <- combined %>%
 message("Company names cleansed (LIMITED -> LTD, LTD. -> LTD)")
 
 # ---------------------------------------------------------------------------
-# 2. Select top 200 companies by 2023-24 Total Income
+# 2. Canonical company names (most recent year per ABN)
 # ---------------------------------------------------------------------------
 
-top200 <- combined %>%
-  filter(`Financial Year` == "2023-24") %>%
-  arrange(desc(`Total Income`)) %>%
-  slice_head(n = 200) %>%
-  select(Company, ABN)
+# For each ABN, use the name from the most recent financial year as canonical.
+# This handles companies that changed names over time (e.g. CALTEX -> AMPOL).
+canonical_names <- combined %>%
+  arrange(desc(`Financial Year`)) %>%
+  distinct(ABN, .keep_all = TRUE) %>%
+  select(ABN, Canonical = Company)
 
-message("Top 200 companies identified from 2023-24 data")
-
-# ---------------------------------------------------------------------------
-# 3. Match top 200 across all years by ABN
-# ---------------------------------------------------------------------------
-
-# Use ABN-only matching to handle companies that changed names over time.
-# Use the most recent (2023-24) name as the canonical company name.
 filtered <- combined %>%
-  filter(ABN %in% top200$ABN)
-
-# Replace historical company names with the canonical 2023-24 name
-canonical_names <- top200 %>% select(ABN, Canonical = Company)
-filtered <- filtered %>%
   left_join(canonical_names, by = "ABN") %>%
   mutate(Company = Canonical) %>%
   select(-Canonical)
 
-message("Rows after ABN-matching top 200 across all years: ", nrow(filtered))
+n_entities <- n_distinct(filtered$ABN)
+message("Unique entities (by ABN): ", n_entities)
+message("Total rows with canonical names: ", nrow(filtered))
 
 # ---------------------------------------------------------------------------
 # 4. Sector enrichment
@@ -209,24 +199,22 @@ filtered <- filtered %>%
     llm_sector = llm_sectors[llm_key],
     llm_sector = as.character(llm_sector),
     Sector = if_else(is.na(Sector) | Sector == "NULL", llm_sector, Sector),
-    `ASX Code` = if_else(is.na(asx_code), NA_character_, asx_code)
+    `ASX Code` = if_else(is.na(asx_code), NA_character_, asx_code),
+    `ASX Listed` = !is.na(asx_code)
   )
 
-# Report unmatched
-unmatched <- filtered %>%
-  filter(is.na(Sector) | Sector == "NULL") %>%
-  distinct(Company)
-
-if (nrow(unmatched) > 0) {
-  message("WARNING: ", nrow(unmatched), " companies still unmatched:")
-  message(paste("  -", unmatched$Company, collapse = "\n"))
-}
-
+# Report sector coverage
+total_entities <- n_distinct(filtered$Company)
 matched_count <- filtered %>%
   filter(!is.na(Sector) & Sector != "NULL") %>%
   distinct(Company) %>%
   nrow()
-message("Companies with sector assignment: ", matched_count, " / 200")
+asx_count <- filtered %>%
+  filter(`ASX Listed`) %>%
+  distinct(Company) %>%
+  nrow()
+message("ASX-listed companies: ", asx_count)
+message("Companies with sector assignment: ", matched_count, " / ", total_entities)
 
 # ---------------------------------------------------------------------------
 # 5. Final output
@@ -243,6 +231,7 @@ output <- filtered %>%
     `Tax Payable` = `Tax Payable`,
     `Financial Year` = `Financial Year`,
     `ASX Code` = if_else(is.na(`ASX Code`), "", `ASX Code`),
+    `ASX Listed` = if_else(`ASX Listed`, "TRUE", ""),
     Source
   )
 

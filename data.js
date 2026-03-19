@@ -12,6 +12,9 @@ window.TaxChart = window.TaxChart || {};
 // Fields that should be parsed as numbers (nulls preserved for missing/blank values)
 TaxChart.NUMERIC_FIELDS = ['Total Income', 'Taxable Income', 'Tax Payable'];
 
+// Fields that should be parsed as booleans (TRUE → true, else false)
+TaxChart.BOOLEAN_FIELDS = ['ASX Listed'];
+
 // Fetch CSV from URL and return parsed rows
 TaxChart.loadData = function(url) {
   return fetch(url)
@@ -43,6 +46,8 @@ TaxChart.parseCSV = function(text) {
         if (row[headers[j]] !== null && isNaN(row[headers[j]])) {
           row[headers[j]] = null;
         }
+      } else if (TaxChart.BOOLEAN_FIELDS.indexOf(headers[j]) !== -1) {
+        row[headers[j]] = val === 'TRUE';
       } else {
         row[headers[j]] = val;
       }
@@ -124,6 +129,7 @@ TaxChart.aggregateBySector = function(rows) {
   var groups = {};
 
   rows.forEach(function(row) {
+    if (!row['Sector']) return; // skip companies without sector assignment
     var key = row['Sector'] + '||' + row['Financial Year'];
     if (!groups[key]) {
       groups[key] = {
@@ -181,10 +187,11 @@ TaxChart.buildMetadata = function(rows) {
   var companySectorMap = {};
 
   rows.forEach(function(row) {
-    if (sectors.indexOf(row['Sector']) === -1) sectors.push(row['Sector']);
+    var sector = row['Sector'];
+    if (sector && sectors.indexOf(sector) === -1) sectors.push(sector);
     if (companies.indexOf(row['Company']) === -1) companies.push(row['Company']);
     if (years.indexOf(row['Financial Year']) === -1) years.push(row['Financial Year']);
-    companySectorMap[row['Company']] = row['Sector'];
+    companySectorMap[row['Company']] = sector || '';
   });
 
   sectors.sort();

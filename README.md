@@ -47,11 +47,10 @@ Rscript R/build_data.R
 **Pipeline:**
 1. Read all xlsx files (handles varying sheet names and column formats across years)
 2. Cleanse company names (LIMITED → LTD, LTD. → LTD)
-3. Select top 200 companies by 2023-24 total income
-4. Match across all 11 years by ABN (handles companies that changed names)
-5. Enrich with GICS sectors (ASX matching + LLM classifications)
-6. Add ASX ticker symbol where available
-7. Output `test-data.csv` with source file reference
+3. Assign canonical company names per ABN (most recent year handles name changes)
+4. Enrich with GICS sectors (ASX matching + LLM classifications)
+5. Flag ASX-listed companies, add ASX ticker symbol where available
+6. Output `test-data.csv` with all entities (~6,025) and source file reference
 
 ## Overview
 

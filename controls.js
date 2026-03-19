@@ -57,6 +57,9 @@ TaxChart.state = {
   pinnedLabels: {},
   logScaleX: false,
   logScaleY: false,
+  asxOnly: true,
+  topN: 0,
+  allRows: [],
   rows: [],
   sectorRows: [],
   metadata: null
@@ -83,11 +86,10 @@ TaxChart.init = function(containerSelector) {
   TaxChart.loadData(csvUrl)
     .then(function(rows) {
       TaxChart.computeDerived(rows);
-      TaxChart.state.rows = rows;
-      TaxChart.state.metadata = TaxChart.buildMetadata(rows);
-      TaxChart.state.sectorRows = TaxChart.aggregateBySector(rows);
+      TaxChart.state.allRows = rows;
+      TaxChart.applyDataFilters();
       TaxChart.state.yearIndex = TaxChart.state.metadata.years.length - 1;
-      // Select all companies and sectors by default
+      // Select all visible companies and sectors by default
       TaxChart.state.metadata.companies.forEach(function(c) {
         TaxChart.state.selected[c] = true;
       });
@@ -124,6 +126,69 @@ TaxChart.computeAxisRanges = function() {
 
   TaxChart.state.axisRangesCompanies = computeRanges(TaxChart.state.rows);
   TaxChart.state.axisRangesSectors = computeRanges(TaxChart.state.sectorRows);
+};
+
+// Apply ASX Listed and Top N filters to allRows, rebuild rows/metadata/sectorRows.
+// Top N ranks companies by Total Income in the latest financial year.
+TaxChart.applyDataFilters = function() {
+  var allRows = TaxChart.state.allRows;
+  var filtered = allRows;
+
+  // ASX Listed filter
+  if (TaxChart.state.asxOnly) {
+    filtered = filtered.filter(function(r) { return r['ASX Listed']; });
+  }
+
+  // Top N filter: rank by Total Income in latest year, keep top N company names
+  if (TaxChart.state.topN > 0) {
+    var years = [];
+    filtered.forEach(function(r) {
+      if (years.indexOf(r['Financial Year']) === -1) years.push(r['Financial Year']);
+    });
+    years.sort();
+    var latestYear = years[years.length - 1];
+
+    // Build company → latest year total income
+    var companyIncome = {};
+    filtered.forEach(function(r) {
+      if (r['Financial Year'] === latestYear && r['Total Income'] !== null) {
+        companyIncome[r['Company']] = r['Total Income'];
+      }
+    });
+
+    // Sort and take top N
+    var ranked = Object.keys(companyIncome).sort(function(a, b) {
+      return companyIncome[b] - companyIncome[a];
+    });
+    var topNames = {};
+    for (var i = 0; i < Math.min(TaxChart.state.topN, ranked.length); i++) {
+      topNames[ranked[i]] = true;
+    }
+
+    filtered = filtered.filter(function(r) { return topNames[r['Company']]; });
+  }
+
+  TaxChart.state.rows = filtered;
+  TaxChart.state.metadata = TaxChart.buildMetadata(filtered);
+  TaxChart.state.sectorRows = TaxChart.aggregateBySector(filtered);
+};
+
+// Reapply data filters and rebuild the full UI (called when ASX/TopN change)
+TaxChart.rebuildAfterFilter = function() {
+  TaxChart.applyDataFilters();
+  // Reset selections to all visible companies/sectors
+  TaxChart.state.selected = {};
+  TaxChart.state.metadata.companies.forEach(function(c) {
+    TaxChart.state.selected[c] = true;
+  });
+  TaxChart.state.selectedSectors = {};
+  TaxChart.state.metadata.sectors.forEach(function(s) {
+    TaxChart.state.selectedSectors[s] = true;
+  });
+  TaxChart.computeAxisRanges();
+  TaxChart.buildSidePanel();
+  TaxChart.syncSectorUI();
+  TaxChart.updateChart();
 };
 
 // Build the app shell: top control bar + main area (chart + side panel)
@@ -323,6 +388,46 @@ TaxChart.buildTopControls = function() {
   logGroup.appendChild(logXLabel);
   logGroup.appendChild(logYLabel);
   bar.appendChild(logGroup);
+
+  // Data filter controls: ASX Listed toggle + Top N dropdown
+  var filterGroup = document.createElement('div');
+  filterGroup.className = 'taxchart-control-group';
+
+  var asxLabel = document.createElement('label');
+  asxLabel.className = 'taxchart-label';
+  var asxCheck = document.createElement('input');
+  asxCheck.type = 'checkbox';
+  asxCheck.checked = TaxChart.state.asxOnly;
+  asxCheck.addEventListener('change', function() {
+    TaxChart.state.asxOnly = this.checked;
+    TaxChart.rebuildAfterFilter();
+  });
+  asxLabel.appendChild(asxCheck);
+  asxLabel.appendChild(document.createTextNode(' ASX Listed'));
+  filterGroup.appendChild(asxLabel);
+
+  var topNSelect = document.createElement('select');
+  topNSelect.className = 'taxchart-select';
+  var topNOptions = [
+    { label: 'All', value: 0 },
+    { label: 'Top 100', value: 100 },
+    { label: 'Top 200', value: 200 },
+    { label: 'Top 500', value: 500 },
+    { label: 'Top 1000', value: 1000 }
+  ];
+  topNOptions.forEach(function(opt) {
+    var el = document.createElement('option');
+    el.value = opt.value;
+    el.textContent = opt.label;
+    el.selected = (opt.value === TaxChart.state.topN);
+    topNSelect.appendChild(el);
+  });
+  topNSelect.addEventListener('change', function() {
+    TaxChart.state.topN = parseInt(this.value);
+    TaxChart.rebuildAfterFilter();
+  });
+  filterGroup.appendChild(topNSelect);
+  bar.appendChild(filterGroup);
 };
 
 // Build the side panel: companies/sectors toggle, sector filter dropdown
@@ -614,7 +719,7 @@ TaxChart.toggleSector = function(sector, checked) {
   TaxChart.state.highlightSector = null;
 };
 
-// Select all sectors and their companies
+// Select all sectors and their companies (including companies without sector)
 TaxChart.selectAllSectors = function() {
   TaxChart.state.metadata.sectors.forEach(function(s) {
     TaxChart.state.selectedSectors[s] = true;
