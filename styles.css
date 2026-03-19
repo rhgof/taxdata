@@ -156,8 +156,9 @@
 
 .taxchart-list-item {
   display: block;
-  padding: 3px 6px;
+  padding: 1px 8px;
   cursor: pointer;
+  font-size: 12px;
   font-size: 13px;
   white-space: nowrap;
 }
