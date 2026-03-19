@@ -38,6 +38,21 @@ TaxChart.updateChart = function() {
   if (TaxChart.state.viewBy === 'sectors' && (mode === 'scatter' || mode === 'bar')) {
     el.on('plotly_click', TaxChart.handleDrillDown);
   }
+
+  // Attach click-to-toggle label handler for company scatter/trails modes
+  if (TaxChart.state.viewBy !== 'sectors' && (mode === 'scatter' || mode === 'trails')) {
+    el.on('plotly_click', function(eventData) {
+      if (!eventData || !eventData.points || !eventData.points[0]) return;
+      var name = eventData.points[0].data.name;
+      if (!name) return;
+      if (TaxChart.state.pinnedLabels[name]) {
+        delete TaxChart.state.pinnedLabels[name];
+      } else {
+        TaxChart.state.pinnedLabels[name] = true;
+      }
+      TaxChart.updateChart();
+    });
+  }
 };
 
 // Return company-level or sector-aggregated rows depending on current view
@@ -75,6 +90,9 @@ TaxChart.getOpacity = function(name) {
 // Build an HTML tooltip showing all metrics for a data point
 TaxChart.buildFullTooltip = function(row) {
   var parts = [row['Company']];
+  if (row['ASX Code']) {
+    parts.push('ASX: ' + row['ASX Code']);
+  }
   if (row['Sector'] && row['Company'] !== row['Sector']) {
     parts.push('Sector: ' + row['Sector']);
   }
@@ -105,14 +123,16 @@ TaxChart.formatValue = function(val, field) {
   return '$' + val.toFixed(0);
 };
 
-// Scatter mode: one marker per selected entity for the chosen year and axis pair
+// Scatter mode: one marker per selected entity for the chosen year and axis pair.
+// Auto-labels top 5 entities by y-value and any pinned labels.
 TaxChart.buildScatterTraces = function() {
   var pair = TaxChart.AXIS_PAIRS[TaxChart.state.axisPairIndex];
   var year = TaxChart.state.metadata.years[TaxChart.state.yearIndex];
   var rows = TaxChart.getActiveRows();
   var selectedNames = Object.keys(TaxChart.state.selected);
-  var traces = [];
 
+  // Collect all valid items
+  var items = [];
   selectedNames.forEach(function(name) {
     var filtered = rows.filter(function(r) {
       return r['Company'] === name && r['Financial Year'] === year;
@@ -120,19 +140,35 @@ TaxChart.buildScatterTraces = function() {
     if (filtered.length === 0) return;
     var row = filtered[0];
     if (row[pair.x] === null || row[pair.y] === null) return;
+    items.push({ name: name, xVal: row[pair.x], yVal: row[pair.y], row: row });
+  });
 
+  // Determine top 5 by y-value
+  var sorted = items.slice().sort(function(a, b) { return b.yVal - a.yVal; });
+  var topNames = {};
+  for (var i = 0; i < Math.min(5, sorted.length); i++) {
+    topNames[sorted[i].name] = true;
+  }
+
+  // Build traces
+  var traces = [];
+  items.forEach(function(item) {
+    var shouldLabel = !!TaxChart.state.pinnedLabels[item.name] || !!topNames[item.name];
     traces.push({
-      x: [row[pair.x]],
-      y: [row[pair.y]],
-      mode: 'markers',
+      x: [item.xVal],
+      y: [item.yVal],
+      mode: 'markers+text',
       type: 'scatter',
-      name: name,
+      name: item.name,
       marker: {
-        color: TaxChart.getColor(name),
+        color: TaxChart.getColor(item.name),
         size: 10,
-        opacity: TaxChart.getOpacity(name)
+        opacity: TaxChart.getOpacity(item.name)
       },
-      text: [TaxChart.buildFullTooltip(row)],
+      text: [shouldLabel ? item.name : ''],
+      textposition: 'top center',
+      textfont: { size: 10 },
+      hovertext: [TaxChart.buildFullTooltip(item.row)],
       hoverinfo: 'text'
     });
   });
@@ -142,14 +178,31 @@ TaxChart.buildScatterTraces = function() {
 
 // Trails mode: lines+markers across all years per entity.
 // Latest year = filled circle, prior years = open circles.
+// Auto-labels top 5 entities by latest-year y-value and any pinned labels.
 TaxChart.buildTrailsTraces = function() {
   var pair = TaxChart.AXIS_PAIRS[TaxChart.state.axisPairIndex];
   var rows = TaxChart.getActiveRows();
   var selectedNames = Object.keys(TaxChart.state.selected);
   var years = TaxChart.state.metadata.years;
   var latestYear = years[years.length - 1];
-  var traces = [];
 
+  // Collect latest-year y-values to determine top 5
+  var latestYValues = [];
+  selectedNames.forEach(function(name) {
+    var latestRow = rows.filter(function(r) {
+      return r['Company'] === name && r['Financial Year'] === latestYear;
+    });
+    if (latestRow.length > 0 && latestRow[0][pair.y] !== null) {
+      latestYValues.push({ name: name, yVal: latestRow[0][pair.y] });
+    }
+  });
+  latestYValues.sort(function(a, b) { return b.yVal - a.yVal; });
+  var topNames = {};
+  for (var i = 0; i < Math.min(5, latestYValues.length); i++) {
+    topNames[latestYValues[i].name] = true;
+  }
+
+  var traces = [];
   selectedNames.forEach(function(name) {
     var companyRows = rows.filter(function(r) {
       return r['Company'] === name;
@@ -158,12 +211,19 @@ TaxChart.buildTrailsTraces = function() {
       return years.indexOf(a['Financial Year']) - years.indexOf(b['Financial Year']);
     });
 
-    var x = [], y = [], texts = [], symbols = [], sizes = [];
+    var x = [], y = [], hoverTexts = [], labelTexts = [], symbols = [], sizes = [];
+    var shouldLabel = !!TaxChart.state.pinnedLabels[name] || !!topNames[name];
     companyRows.forEach(function(row) {
       if (row[pair.x] === null || row[pair.y] === null) return;
       x.push(row[pair.x]);
       y.push(row[pair.y]);
-      texts.push(TaxChart.buildFullTooltip(row));
+      hoverTexts.push(TaxChart.buildFullTooltip(row));
+      // Only label the latest-year point
+      if (row['Financial Year'] === latestYear && shouldLabel) {
+        labelTexts.push(name);
+      } else {
+        labelTexts.push('');
+      }
       // Filled circle for latest year, open circle for prior
       if (row['Financial Year'] === latestYear) {
         symbols.push('circle');
@@ -179,7 +239,7 @@ TaxChart.buildTrailsTraces = function() {
     traces.push({
       x: x,
       y: y,
-      mode: 'lines+markers',
+      mode: 'lines+markers+text',
       type: 'scatter',
       name: name,
       line: { color: TaxChart.getColor(name) },
@@ -190,7 +250,10 @@ TaxChart.buildTrailsTraces = function() {
         line: { color: TaxChart.getColor(name), width: 2 }
       },
       opacity: TaxChart.getOpacity(name),
-      text: texts,
+      text: labelTexts,
+      textposition: 'top center',
+      textfont: { size: 10 },
+      hovertext: hoverTexts,
       hoverinfo: 'text'
     });
   });
@@ -353,7 +416,7 @@ TaxChart.buildLayout = function() {
   } else {
     var metric = TaxChart.SINGLE_METRICS[TaxChart.state.metricIndex];
     if (mode === 'bar') {
-      layout.xaxis = { title: '', categoryorder: 'trace', tickangle: -45 };
+      layout.xaxis = { title: '', categoryorder: 'trace', tickangle: -90, tickfont: { size: 10 } };
       layout.yaxis = {
         title: metric.label,
         type: TaxChart.state.logScaleY ? 'log' : 'linear',

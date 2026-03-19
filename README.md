@@ -28,9 +28,35 @@ npx serve .
 php -S localhost:8000
 ```
 
+## Building the data
+
+The R script `R/build_data.R` generates `test-data.csv` from raw ATO data:
+
+```sh
+Rscript R/build_data.R
+```
+
+**Requirements:** R with packages `readxl`, `readr`, `dplyr`, `jsonlite`, `stringr`.
+
+**Input files** (in `Inputs/`):
+- 11 ATO corporate tax transparency xlsx files (2013-14 to 2023-24)
+- `ASXListedCompanies.csv` — ASX listed companies with GICS industry groups
+- `llm_classifications.json` — manual sector classifications for non-ASX companies
+- `gics_sector_map.json` — GICS industry group → sector with ASX index abbreviation
+
+**Pipeline:**
+1. Read all xlsx files (handles varying sheet names and column formats across years)
+2. Select top 200 companies by 2023-24 total income
+3. Match across all 11 years by company name + ABN
+4. Enrich with GICS sectors (ASX matching + LLM classifications)
+5. Add ASX ticker symbol where available
+6. Output `test-data.csv` with source file reference
+
 ## Overview
 
 - **Tech:** Plain HTML, CSS, and JavaScript with Plotly.js (loaded via CDN). No build step required.
 - **Data:** CSV loaded from the URL specified in the `data-csv-url` attribute on the chart element.
 - **Chart modes:** Scatter, Scatter with Trails, Bar, Line.
-- **Controls:** Side panel with company/sector selection, year slider, axis pair presets, and sort options.
+- **Controls:** Side panel with company/sector selection, year slider, axis pair presets, and sort-by dropdown.
+- **Sector legend:** Floating overlay on chart + collapsible panel in side panel, both with checkboxes and color swatches.
+- **Dot labels:** Top 5 companies auto-labeled in scatter/trails; click any dot to toggle its label.
