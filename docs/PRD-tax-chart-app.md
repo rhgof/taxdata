@@ -1,0 +1,87 @@
+# PRD: Australian Corporate Tax Transparency Chart App
+
+## Problem Statement
+
+Australian corporate tax transparency data published annually by the ATO is available as raw spreadsheets spanning 11 years and ~6,025 entities. There is no accessible way to explore, compare, and visualize this data interactively. Journalists, researchers, and citizens who want to understand corporate tax behaviour — such as which companies pay low effective tax rates, how tax payments trend over time, or how sectors compare — must manually wrangle spreadsheets. This makes the data effectively inaccessible to non-technical audiences.
+
+## Solution
+
+A browser-based interactive chart application that visualizes the full ATO corporate tax transparency dataset. The app loads a pre-enriched CSV file and provides five chart modes (Scatter, Scatter with Trails, Bar, Bar over Time, Line) with company and sector views, GICS sector classification, filtering by ASX listing status and company size, and rich tooltips. It is built as a self-contained embeddable widget using plain HTML/CSS/JS with Plotly.js, requiring no build step or framework.
+
+## User Stories
+
+1. As a researcher, I want to view a scatter plot of Total Income vs Tax Payable for ASX-listed companies, so that I can identify outliers with unusually low or high tax payments relative to revenue.
+2. As a journalist, I want to switch between Scatter, Trails, Bar, Bar (Time), and Line chart modes, so that I can find the best visualization for a particular story angle.
+3. As a citizen, I want to search for a specific company by name, so that I can quickly find and select it for charting.
+4. As a researcher, I want to filter companies by sector using a multi-select dropdown, so that I can compare companies within the same industry.
+5. As a user, I want to select and deselect individual companies via checkboxes, so that I can build custom comparisons.
+6. As a journalist, I want to view scatter trails showing a company's position across all years, so that I can see how its tax behaviour has changed over time.
+7. As a user, I want filled circles for the latest year and hollow circles for prior years in trails mode, so that I can distinguish current from historical data points.
+8. As a researcher, I want to switch to sector view and see aggregated data, so that I can compare entire industries rather than individual companies.
+9. As a user, I want to click on a sector data point and drill down to see all companies in that sector, so that I can investigate which companies drive sector-level trends.
+10. As a user, I want a year slider to select which financial year to view in scatter and bar modes, so that I can explore data at different points in time.
+11. As a researcher, I want log scale toggles for X and Y axes, so that I can visualize data spanning several orders of magnitude without small companies being invisible.
+12. As a user, I want hover tooltips showing company name, sector, country of ultimate owner, and all financial metrics, so that I can get full context without leaving the chart.
+13. As a journalist, I want to toggle between ASX-listed companies only (~379) and all ~6,025 entities, so that I can focus on publicly listed companies or explore the broader dataset.
+14. As a user, I want a Top N filter (100/200/500/1000/All), so that I can limit the dataset to the largest companies by revenue and avoid visual clutter.
+15. As a researcher, I want bar charts sorted descending by value, so that I can quickly identify the largest or smallest companies by a chosen metric.
+16. As a user, I want consistent sector colours across all chart modes, so that I can recognise sectors at a glance when switching views.
+17. As a user, I want selected companies pinned to the top of the checkbox list when the list rebuilds (on filter/mode changes), but not when clicking individual checkboxes, so that items don't jump away mid-selection.
+18. As a user, I want a Select All checkbox that syncs with sector controls, so that I can quickly select or clear all companies.
+19. As a researcher, I want derived metrics (Tax Rate, Taxable Income Margin, Tax Revenue Rate) computed automatically, so that I can analyse effective tax rates without manual calculation.
+20. As a user, I want the app to fit within 85% viewport height without scrolling, so that it works well embedded in a larger page.
+21. As a user, I want the chart axes to remain fixed regardless of my selections, so that the scale doesn't jump around when I add or remove companies.
+22. As a researcher, I want separate axis ranges for company vs sector views, so that sector aggregates don't inflate the scale when I'm looking at individual companies.
+23. As a user, I want the app to handle missing Taxable Income and Tax Payable gracefully (they're blank under ATO rules), so that companies with null values don't break the chart.
+24. As a user, I want source attribution displayed on the chart, so that I know where the data comes from.
+25. As a user, I want the app to work on screens as narrow as 600px with controls stacking vertically, so that it's usable on smaller displays.
+26. As a data maintainer, I want a reproducible R pipeline (`build_data.R`) that ingests raw ATO xlsx files, cleanses names, matches companies by ABN across years, enriches with GICS sectors, and outputs a single CSV, so that the dataset can be rebuilt when new years are published.
+27. As a data maintainer, I want the pipeline to use canonical company names from the most recent year (handling renames like CALTEX to AMPOL), so that company identities are consistent across the time series.
+28. As a user, I want line charts showing one line per company/sector over all financial years, so that I can see trends over the full 11-year period.
+29. As a user, I want a bar-over-time chart showing grouped bars per year for selected companies/sectors, so that I can compare magnitudes side-by-side across years using bars instead of lines.
+29. As a user, I want auto-labels on the top 5 companies by y-value in scatter/trails modes, so that major companies are immediately identifiable.
+30. As a user, I want to click any data point to toggle its label on or off, so that I can label specific companies of interest.
+31. As a user, I want bar chart labels angled at -45 degrees, so that company names are readable without overlapping.
+32. As a user, I want an empty chart with axes shown (no placeholder text) when nothing is selected, so that the interface remains clean.
+33. As a user, I want changing ASX or Top N filters to preserve my existing sector and company selections where possible, so that I don't lose my work when adjusting filters.
+
+## Implementation Decisions
+
+- **Tech stack:** Plain HTML, CSS, and JavaScript with Plotly.js 2.x via CDN. No build step, no framework. All styles scoped with `.taxchart-` prefix.
+- **Module structure:** Five files — `index.html` (shell), `styles.css` (scoped styles), `data.js` (CSV fetch/parse/derived values/aggregation), `charts.js` (trace builders, layout, formatting), `controls.js` (state management, UI controls, event handlers).
+- **State management:** A single global `window.TaxChart.state` object holding all UI state (mode, selections, filters, axis ranges). `controls.js` mutates state and calls `charts.js` to re-render.
+- **Data pipeline:** R script (`R/build_data.R`) using readxl, readr, dplyr, jsonlite, stringr. Ingests `Inputs/*.xlsx`, cleanses names (LIMITED to LTD), assigns canonical names per ABN (most recent year), enriches with GICS sectors from `Inputs/ASXListedCompanies.csv` + `Inputs/llm_classifications.json` + `Inputs/gics_sector_map.json`, outputs `test-data.csv`.
+- **Data filtering:** Two-stage: first ASX Listed toggle, then Top N by latest-year Total Income. Filter controls are in the side panel alongside sector controls. Filters compose with sector selections. Changing filters recomputes `state.rows` from `state.allRows`.
+- **Axis ranges:** Pre-computed on data load, separate for company and sector views, with 5% padding. Prevents axes from jumping as selections change.
+- **Sector colours:** Fixed 20-colour palette assigned alphabetically once on data load. Used consistently across all views and modes.
+- **Sector aggregation:** Sum numeric columns per sector per year, recompute derived ratios on sums (not sum of ratios).
+- **Null handling:** Missing Taxable Income / Tax Payable parsed as null. Division by zero or null denominator produces null. Null values omitted from chart traces.
+- **Chart initialization:** `TaxChart.init(containerSelector)` reads `data-csv-url` attribute, fetches CSV, parses, renders. Embedding is a single `<div>` + `<script>` tag.
+- **Bar chart sorting:** Uses `categoryorder: 'trace'` with a sort-by dropdown (default: Total Income descending). Plotly legend disabled; side panel serves as legend.
+- **Tooltip formatting:** Currency values formatted as $B/$M/$K. Ratios formatted as percentages. Semi-transparent background (`rgba(255,255,255,0.85)`).
+
+## Testing Decisions
+
+- **No automated test suite.** This is a single-page data visualization app with no build step. Testing is manual: load the app, verify chart modes render correctly, check tooltips, test filter combinations, verify responsive layout.
+- **Data pipeline validation:** The R script output can be spot-checked against raw ATO xlsx files for row counts, company name consistency, and sector assignments.
+- **Browser testing:** Verify in Chrome and Safari on desktop. Responsive breakpoint at 600px.
+
+## Out of Scope
+
+- Server-side processing or API — the app is purely client-side
+- User authentication or saved state
+- Data export (CSV download, image export)
+- Accessibility compliance beyond basic keyboard navigation
+- Automated testing infrastructure
+- Mobile-optimized layout below 600px
+- Real-time data updates — dataset is rebuilt manually when new ATO data is published
+- Bar chart tooltip cursor tracking (documented as future enhancement)
+- Floating sector legend overlay (code preserved but disabled)
+
+## Further Notes
+
+- The ATO publishes corporate tax transparency data annually, typically mid-year. The pipeline is designed to accommodate new years by adding xlsx files to `Inputs/` and re-running `build_data.R`.
+- Some non-ASX companies outside the original top 200 lack sector assignments. These appear as "Unknown" sector.
+- The ASX GICS mapping uses a special case: companies with GICS group "Not Applic" are mapped to Financials, covering Listed Investment Companies and funds.
+- Earlier financial years have fewer entities as the ATO reporting threshold captured fewer companies.
+- The `Source` column in the CSV preserves the original xlsx filename for data provenance.

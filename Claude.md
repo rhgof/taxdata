@@ -2,32 +2,34 @@
 A browser-based interactive chart app for Australian corporate tax transparency data.
 - Embedded within a broader web page, fits 85% viewport height (no scrolling)
 - Data: CSV loaded via fetch() from URL in `data-csv-url` attribute
-- Columns: Company, ABN, Country of Ultimate Owner, Sector, Total Income (Revenue), Taxable Income, Tax Payable, Financial Year, ASX Code, Source
+- Columns: Company, ABN, Country of Ultimate Owner, Sector, Total Income (Revenue), Taxable Income, Tax Payable, Financial Year, ASX Code, ASX Listed, Source
 - Some rows have null/blank Taxable Income and Tax Payable (ATO rules)
 - Derived: Tax Rate = Tax Payable / Taxable Income, Taxable Income Margin = Taxable Income / Total Income, Tax Revenue Rate = Tax Payable / Total Income (all displayed as percentages)
 - Sectors use GICS classification with ASX index abbreviations, e.g. "Materials (XMJ)", "Financials (XFJ)"
 - "Total Income (Revenue)" used consistently in all labels, tooltips, and dropdowns
-- Chart modes: Scatter, Scatter with Trails, Bar, Line
+- Chart modes: Scatter, Scatter with Trails, Bar, Bar (Time), Line
 - Trails: filled circles for latest year, open circles for prior years
-- Side panel with company/sector selection (checkboxes, search, select all checkbox, selected pinned to top)
-- Collapsible sector panel in side panel with checkboxes, colored swatches, Check all/Clear all
-- Floating sector legend overlay on chart area (collapsible, with checkboxes and swatches)
+- Side panel with company/sector selection (checkboxes, search, select all checkbox, selected pinned to top on list rebuild)
+- Collapsible sector panel in side panel with checkboxes, colored swatches, "All" checkbox in header
+- Floating sector legend overlay on chart area (code preserved but disabled, may re-enable later)
 - Select All checkbox syncs with sector controls (check = all sectors, uncheck = clear all)
 - Sector drill-down, consistent sector color palette
-- Pre-defined axis pairs for scatter; single metric dropdown for bar/line
-- Year slider for scatter/bar modes
+- Pre-defined axis pairs for scatter; single metric dropdown for bar/bar-time/line
+- Year slider for scatter/bar modes (bar-time shows all years like line)
 - Log scale toggles (Log X, Log Y) with gridlines on powers of 10
 - Fixed axis ranges: separate min/max for company view vs sector view, 5% padding
 - Bar chart: sort-by dropdown (default: Total Income), vertical labels, no Plotly legend
 - Scatter/trails: auto-label top 5 companies by y-value, click any dot to toggle label
 - Full tooltips across all chart modes (company, sector, country, all metrics, year)
 - Semi-transparent tooltip background
-- Source attribution: bottom-right for scatter/trails, top-right for bar/line
+- Source attribution: bottom-right for scatter/trails, top-right for bar/bar-time/line
 - Empty chart with axes shown when no data selected (no placeholder text)
 - Tech: plain HTML/CSS/JS, Plotly.js 2.x via CDN, no build step
 - Files: index.html, styles.css, data.js, charts.js, controls.js, R/build_data.R
 - Design spec: docs/superpowers/specs/2026-03-16-tax-chart-app-design.md
-- Data: top 200 companies by 2023-24 revenue, 11 years (2013-14 to 2023-24), 1914 rows
+- Data: all ATO corporate tax transparency entities (~6,025), 11 years (2013-14 to 2023-24), ~28,554 rows
+- UI filters in side panel: ASX Listed toggle (default: on, ~379 companies), Top N dropdown (100/200/500/1000/All by latest-year revenue)
 - Raw ATO data: Inputs/*.xlsx (11 years of corporate tax transparency reports)
 - Sector enrichment: Inputs/ASXListedCompanies.csv (ASX GICS) + Inputs/llm_classifications.json (manual) + Inputs/gics_sector_map.json (industry→sector)
 - Data pipeline: R/build_data.R generates test-data.csv from Inputs/ (requires readxl, readr, dplyr, jsonlite, stringr)
+- Pipeline: name cleansing (LIMITED→LTD), canonical names per ABN (most recent year), GICS sector enrichment (ASX + LLM fallback), ASX Listed flag

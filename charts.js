@@ -25,6 +25,8 @@ TaxChart.updateChart = function() {
       traces = TaxChart.buildTrailsTraces();
     } else if (mode === 'bar') {
       traces = TaxChart.buildBarTraces();
+    } else if (mode === 'bar-time') {
+      traces = TaxChart.buildBarTimeTraces();
     } else if (mode === 'line') {
       traces = TaxChart.buildLineTraces();
     }
@@ -35,7 +37,7 @@ TaxChart.updateChart = function() {
   Plotly.newPlot(el, traces, layout, { responsive: true });
 
   // Attach drill-down click handler for sector view
-  if (TaxChart.state.viewBy === 'sectors' && (mode === 'scatter' || mode === 'bar')) {
+  if (TaxChart.state.viewBy === 'sectors' && (mode === 'scatter' || mode === 'bar' || mode === 'bar-time')) {
     el.on('plotly_click', TaxChart.handleDrillDown);
   }
 
@@ -310,6 +312,63 @@ TaxChart.buildBarTraces = function() {
   return traces;
 };
 
+// Bar-time mode: grouped bars per year, one bar group per entity across all years
+TaxChart.buildBarTimeTraces = function() {
+  var metric = TaxChart.SINGLE_METRICS[TaxChart.state.metricIndex];
+  var rows = TaxChart.getActiveRows();
+  var selectedNames = Object.keys(TaxChart.state.selected);
+  var years = TaxChart.state.metadata.years;
+
+  // Optionally sort entities by a chosen field using latest year data
+  if (TaxChart.state.sortDescending) {
+    var latestYear = years[years.length - 1];
+    var sortField = TaxChart.state.sortField;
+    selectedNames.sort(function(a, b) {
+      var aRow = rows.filter(function(r) { return r['Company'] === a && r['Financial Year'] === latestYear; });
+      var bRow = rows.filter(function(r) { return r['Company'] === b && r['Financial Year'] === latestYear; });
+      var aVal = aRow.length > 0 && aRow[0][sortField] != null ? aRow[0][sortField] : -Infinity;
+      var bVal = bRow.length > 0 && bRow[0][sortField] != null ? bRow[0][sortField] : -Infinity;
+      return bVal - aVal;
+    });
+  }
+
+  // One trace per entity (each trace has bars across all years)
+  var traces = [];
+  selectedNames.forEach(function(name) {
+    var companyRows = rows.filter(function(r) {
+      return r['Company'] === name;
+    });
+
+    var x = [], y = [], texts = [];
+    years.forEach(function(yr) {
+      var row = companyRows.filter(function(r) { return r['Financial Year'] === yr; })[0];
+      if (row && row[metric.field] !== null) {
+        x.push(yr);
+        y.push(row[metric.field]);
+        texts.push(TaxChart.buildFullTooltip(row));
+      }
+    });
+
+    if (x.length === 0) return;
+
+    traces.push({
+      x: x,
+      y: y,
+      type: 'bar',
+      name: name,
+      marker: {
+        color: TaxChart.getColor(name),
+        opacity: TaxChart.getOpacity(name)
+      },
+      hovertext: texts,
+      hoverinfo: 'text',
+      textposition: 'none'
+    });
+  });
+
+  return traces;
+};
+
 // Line mode: one line per entity showing a single metric across all years
 TaxChart.buildLineTraces = function() {
   var metric = TaxChart.SINGLE_METRICS[TaxChart.state.metricIndex];
@@ -379,7 +438,7 @@ TaxChart.buildLayout = function() {
   var dateStr = now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
 
   var layout = {
-    margin: { t: 30, r: 30, b: (mode === 'bar' ? 150 : 50), l: 70 },
+    margin: { t: 30, r: 30, b: (mode === 'bar' || mode === 'bar-time' ? 150 : 50), l: 70 },
     showlegend: false,
     hovermode: 'closest',
     hoverlabel: { bgcolor: 'rgba(255,255,255,0.85)', bordercolor: '#ccc', font: { color: '#333' } },
@@ -387,9 +446,9 @@ TaxChart.buildLayout = function() {
       text: 'Source: @deadinlongrun.bsky.social ' + dateStr,
       xref: 'paper', yref: 'paper',
       x: 1,
-      y: (mode === 'bar' || mode === 'line') ? 1 : 0,
+      y: (mode === 'bar' || mode === 'bar-time' || mode === 'line') ? 1 : 0,
       xanchor: 'right',
-      yanchor: (mode === 'bar' || mode === 'line') ? 'top' : 'bottom',
+      yanchor: (mode === 'bar' || mode === 'bar-time' || mode === 'line') ? 'top' : 'bottom',
       showarrow: false,
       font: { size: 10, color: '#bbb' }
     }]
@@ -422,6 +481,14 @@ TaxChart.buildLayout = function() {
         type: TaxChart.state.logScaleY ? 'log' : 'linear',
         range: TaxChart.getAxisRange(metric.field, TaxChart.state.logScaleY)
       };
+    } else if (mode === 'bar-time') {
+      layout.xaxis = { title: 'Financial Year', type: 'category', categoryorder: 'array', categoryarray: TaxChart.state.metadata.years };
+      layout.yaxis = {
+        title: metric.label,
+        type: TaxChart.state.logScaleY ? 'log' : 'linear',
+        range: TaxChart.getAxisRange(metric.field, TaxChart.state.logScaleY)
+      };
+      layout.barmode = 'group';
     } else {
       layout.xaxis = { title: 'Financial Year', type: 'category', categoryorder: 'array', categoryarray: TaxChart.state.metadata.years };
       layout.yaxis = {
@@ -447,7 +514,7 @@ TaxChart.applyHighlight = function() {
   });
 
   var mode = TaxChart.state.mode;
-  if (mode === 'bar') {
+  if (mode === 'bar' || mode === 'bar-time') {
     // For bar traces, update marker.opacity per-trace
     for (var i = 0; i < el.data.length; i++) {
       Plotly.restyle(el, { 'marker.opacity': opacities[i] }, [i]);

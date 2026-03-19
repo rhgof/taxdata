@@ -130,6 +130,13 @@
   max-width: 100%;
 }
 
+.taxchart-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
 .taxchart-search-row {
   display: flex;
   flex-wrap: wrap;
@@ -310,12 +317,6 @@
   border-top: 1px solid #e0e0e0;
 }
 
-.taxchart-sector-panel-btnrow {
-  display: flex;
-  gap: 6px;
-  padding: 2px 8px;
-  border-top: 1px solid #e0e0e0;
-}
 
 /* ── Mobile: stack vertically ── */
 @media (max-width: 600px) {

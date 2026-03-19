@@ -40,7 +40,7 @@ TaxChart.SINGLE_METRICS = [
   { label: 'Tax Revenue Rate', field: 'Tax Revenue Rate' }
 ];
 
-TaxChart.MODES = ['scatter', 'trails', 'bar', 'line'];
+TaxChart.MODES = ['scatter', 'trails', 'bar', 'bar-time', 'line'];
 
 // Global application state — mutated by controls, read by chart builders
 TaxChart.state = {
@@ -252,7 +252,7 @@ TaxChart.buildTopControls = function() {
   modeLabel.textContent = 'Chart:';
   modeGroup.appendChild(modeLabel);
 
-  var modeNames = { scatter: 'Scatter', trails: 'Trails', bar: 'Bar', line: 'Line' };
+  var modeNames = { scatter: 'Scatter', trails: 'Trails', bar: 'Bar', 'bar-time': 'Bar (Time)', line: 'Line' };
   TaxChart.MODES.forEach(function(mode) {
     var btn = document.createElement('button');
     btn.className = 'taxchart-mode-btn' + (TaxChart.state.mode === mode ? ' taxchart-active' : '');
@@ -307,7 +307,7 @@ TaxChart.buildTopControls = function() {
   axisGroup.appendChild(axisSelect);
   bar.appendChild(axisGroup);
 
-  // Year slider
+  // Year slider (not shown for trails, bar-time, or line — they show all years)
   var showYear = TaxChart.state.mode === 'scatter' || TaxChart.state.mode === 'bar';
   if (showYear) {
     var yearGroup = document.createElement('div');
@@ -334,8 +334,8 @@ TaxChart.buildTopControls = function() {
     bar.appendChild(yearGroup);
   }
 
-  // Sort controls — bar mode only: descending checkbox + sort-by dropdown
-  if (TaxChart.state.mode === 'bar') {
+  // Sort controls — bar and bar-time modes: descending checkbox + sort-by dropdown
+  if (TaxChart.state.mode === 'bar' || TaxChart.state.mode === 'bar-time') {
     var sortGroup = document.createElement('div');
     sortGroup.className = 'taxchart-control-group';
     var sortLabel = document.createElement('label');
@@ -400,45 +400,6 @@ TaxChart.buildTopControls = function() {
   logGroup.appendChild(logYLabel);
   bar.appendChild(logGroup);
 
-  // Data filter controls: ASX Listed toggle + Top N dropdown
-  var filterGroup = document.createElement('div');
-  filterGroup.className = 'taxchart-control-group';
-
-  var asxLabel = document.createElement('label');
-  asxLabel.className = 'taxchart-label';
-  var asxCheck = document.createElement('input');
-  asxCheck.type = 'checkbox';
-  asxCheck.checked = TaxChart.state.asxOnly;
-  asxCheck.addEventListener('change', function() {
-    TaxChart.state.asxOnly = this.checked;
-    TaxChart.rebuildAfterFilter();
-  });
-  asxLabel.appendChild(asxCheck);
-  asxLabel.appendChild(document.createTextNode(' ASX Listed'));
-  filterGroup.appendChild(asxLabel);
-
-  var topNSelect = document.createElement('select');
-  topNSelect.className = 'taxchart-select';
-  var topNOptions = [
-    { label: 'All', value: 0 },
-    { label: 'Top 100', value: 100 },
-    { label: 'Top 200', value: 200 },
-    { label: 'Top 500', value: 500 },
-    { label: 'Top 1000', value: 1000 }
-  ];
-  topNOptions.forEach(function(opt) {
-    var el = document.createElement('option');
-    el.value = opt.value;
-    el.textContent = opt.label;
-    el.selected = (opt.value === TaxChart.state.topN);
-    topNSelect.appendChild(el);
-  });
-  topNSelect.addEventListener('change', function() {
-    TaxChart.state.topN = parseInt(this.value);
-    TaxChart.rebuildAfterFilter();
-  });
-  filterGroup.appendChild(topNSelect);
-  bar.appendChild(filterGroup);
 };
 
 // Build the side panel: companies/sectors toggle, sector filter dropdown
@@ -484,23 +445,45 @@ TaxChart.buildSidePanel = function() {
     panelHeader.className = 'taxchart-sector-panel-header';
     var panelCollapsed = false;
 
+    var allSectorsCb = document.createElement('input');
+    allSectorsCb.type = 'checkbox';
+    allSectorsCb.style.margin = '0 4px 0 0';
+
+    var panelLabel = document.createElement('span');
+    panelLabel.style.flex = '1';
+
     function updatePanelHeader() {
       var count = Object.keys(TaxChart.state.selectedSectors).length;
       var total = TaxChart.state.metadata.sectors.length;
-      panelHeader.textContent = (panelCollapsed ? '\u25B6' : '\u25BC') + ' Sectors (' + count + '/' + total + ')';
+      panelLabel.textContent = (panelCollapsed ? '\u25B6' : '\u25BC') + ' Sectors (' + count + '/' + total + ')';
+      allSectorsCb.checked = count === total;
+      allSectorsCb.indeterminate = count > 0 && count < total;
     }
+
+    allSectorsCb.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (this.checked) {
+        TaxChart.selectAllSectors();
+      } else {
+        TaxChart.clearAllSectors();
+      }
+      updatePanelHeader();
+      TaxChart.syncSectorUI();
+      TaxChart.updateCheckboxList();
+      TaxChart.updateChart();
+    });
+
+    panelHeader.appendChild(allSectorsCb);
+    panelHeader.appendChild(panelLabel);
     updatePanelHeader();
 
     var panelBody = document.createElement('div');
     panelBody.className = 'taxchart-sector-panel-body';
 
-    var panelBtnRow = document.createElement('div');
-    panelBtnRow.className = 'taxchart-sector-panel-btnrow';
-
-    panelHeader.addEventListener('click', function() {
+    panelHeader.addEventListener('click', function(e) {
+      if (e.target === allSectorsCb) return;
       panelCollapsed = !panelCollapsed;
       panelBody.style.display = panelCollapsed ? 'none' : 'block';
-      panelBtnRow.style.display = panelCollapsed ? 'none' : 'flex';
       updatePanelHeader();
     });
 
@@ -533,34 +516,8 @@ TaxChart.buildSidePanel = function() {
       panelBody.appendChild(item);
     });
 
-    var checkAllBtn = document.createElement('button');
-    checkAllBtn.className = 'taxchart-mode-btn';
-    checkAllBtn.textContent = 'Check all';
-    checkAllBtn.addEventListener('click', function() {
-      TaxChart.selectAllSectors();
-      updatePanelHeader();
-      TaxChart.syncSectorUI();
-      TaxChart.updateCheckboxList();
-      TaxChart.updateChart();
-    });
-
-    var clearAllBtn = document.createElement('button');
-    clearAllBtn.className = 'taxchart-mode-btn';
-    clearAllBtn.textContent = 'Clear all';
-    clearAllBtn.addEventListener('click', function() {
-      TaxChart.clearAllSectors();
-      updatePanelHeader();
-      TaxChart.syncSectorUI();
-      TaxChart.updateCheckboxList();
-      TaxChart.updateChart();
-    });
-
-    panelBtnRow.appendChild(checkAllBtn);
-    panelBtnRow.appendChild(clearAllBtn);
-
     sectorPanel.appendChild(panelHeader);
     sectorPanel.appendChild(panelBody);
-    sectorPanel.appendChild(panelBtnRow);
     panel.appendChild(sectorPanel);
 
     TaxChart._updateCollapsiblePanel = function() {
@@ -572,6 +529,46 @@ TaxChart.buildSidePanel = function() {
       updatePanelHeader();
     };
   }
+
+  // Data filter controls: ASX Listed toggle + Top N dropdown
+  var filterRow = document.createElement('div');
+  filterRow.className = 'taxchart-filter-row';
+
+  var asxLabel = document.createElement('label');
+  asxLabel.className = 'taxchart-label';
+  var asxCheck = document.createElement('input');
+  asxCheck.type = 'checkbox';
+  asxCheck.checked = TaxChart.state.asxOnly;
+  asxCheck.addEventListener('change', function() {
+    TaxChart.state.asxOnly = this.checked;
+    TaxChart.rebuildAfterFilter();
+  });
+  asxLabel.appendChild(asxCheck);
+  asxLabel.appendChild(document.createTextNode(' ASX Listed'));
+  filterRow.appendChild(asxLabel);
+
+  var topNSelect = document.createElement('select');
+  topNSelect.className = 'taxchart-select';
+  var topNOptions = [
+    { label: 'All', value: 0 },
+    { label: 'Top 100', value: 100 },
+    { label: 'Top 200', value: 200 },
+    { label: 'Top 500', value: 500 },
+    { label: 'Top 1000', value: 1000 }
+  ];
+  topNOptions.forEach(function(opt) {
+    var el = document.createElement('option');
+    el.value = opt.value;
+    el.textContent = opt.label;
+    el.selected = (opt.value === TaxChart.state.topN);
+    topNSelect.appendChild(el);
+  });
+  topNSelect.addEventListener('change', function() {
+    TaxChart.state.topN = parseInt(this.value);
+    TaxChart.rebuildAfterFilter();
+  });
+  filterRow.appendChild(topNSelect);
+  panel.appendChild(filterRow);
 
   var searchRow = document.createElement('div');
   searchRow.className = 'taxchart-search-row';
@@ -683,7 +680,14 @@ TaxChart.updateCheckboxList = function() {
       } else {
         delete TaxChart.state.selected[item];
       }
-      TaxChart.updateCheckboxList();
+      // Update select-all checkbox without rebuilding the list (avoids reordering mid-click)
+      var selectAllCb = document.getElementById('taxchart-select-all');
+      if (selectAllCb) {
+        var visibleItems = TaxChart.getVisibleItems();
+        selectAllCb.checked = visibleItems.length > 0 && visibleItems.every(function(v) {
+          return !!TaxChart.state.selected[v];
+        });
+      }
       TaxChart.updateChart();
     });
 

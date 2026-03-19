@@ -2,7 +2,7 @@
 
 ## Overview
 
-A browser-based interactive chart app that visualizes Australian corporate tax transparency data. The app plots multiple data series across four chart modes, with filtering by company and sector. It is embedded as a section within a broader web page and fits within a single viewport (no scrolling).
+A browser-based interactive chart app that visualizes Australian corporate tax transparency data. The app plots multiple data series across five chart modes, with filtering by company and sector. It is embedded as a section within a broader web page and fits within a single viewport (no scrolling).
 
 ## Data
 
@@ -75,7 +75,15 @@ When viewing by sector:
 - Bar labels shown only on x-axis (no labels on bars themselves)
 - Category order follows trace order (`categoryorder: 'trace'`) to respect sort
 
-### 4. Line Chart
+### 4. Bar Over Time
+- X-axis: Financial Year (grouped bars)
+- Y-axis: a chosen metric (single dropdown)
+- One bar group per year, one bar per selected company/sector within each group
+- Year slider hidden (shows all years)
+- Option to sort entities by value (using latest year)
+- Useful for comparing a small number of entities over time using bars instead of lines
+
+### 5. Line Chart
 - X-axis: Financial Year
 - Y-axis: a chosen metric (single dropdown)
 - One line per selected company/sector
@@ -112,12 +120,11 @@ TaxChart.SINGLE_METRICS = [
 The app fills 85% of the viewport height (`85vh`) with a flex column layout, no scrolling on the page itself.
 
 ### Top Controls Bar (left to right, wraps on narrow screens)
-- **Chart mode selector:** buttons — Scatter | Trails | Bar | Line (active state highlighted)
+- **Chart mode selector:** buttons — Scatter | Trails | Bar | Bar (Time) | Line (active state highlighted)
 - **Axis pair dropdown:** populated from config. In bar/line modes, switches to a single metric dropdown
 - **Year slider:** range input spanning min–max years in the data. Visible in scatter and bar modes, hidden in trails and line modes. Label shows current year.
 - **Sort descending checkbox:** visible only in bar chart mode
 - **Log scale toggles:** "Log X" and "Log Y" checkboxes to switch each axis to log10 scale independently. When log scale is active, gridlines appear at major powers of 10 (`dtick: 1`).
-- **Data filters:** "ASX Listed" checkbox (default: on, filters to ~379 ASX-listed companies) and "Top N" dropdown (All / Top 100 / 200 / 500 / 1000 by total income in latest year). These compose with sector filters. Changing filters preserves existing sector/company selections where possible.
 
 ### Main Area (flex row)
 
@@ -127,10 +134,11 @@ The app fills 85% of the viewport height (`85vh`) with a flex column layout, no 
 
 #### Side Panel (right, 280px fixed width)
 - **View toggle:** "Companies" or "Sectors" buttons — switches the list and data grouping
-- **Sector multi-select dropdown** (companies view only): custom dropdown with checkboxes and colored sector swatches. All sectors are checked by default (label shows "All sectors"). Includes "Check all" and "Clear all" buttons at the top of the dropdown. Multiple sectors can be selected/deselected. Selecting a sector auto-selects all its companies; deselecting removes them. Label shows "All sectors", "No sectors", or "N of M sectors". All companies remain visible in the main list for manual cross-sector comparison.
+- **Collapsible sector panel** (companies view only): collapsible panel with checkboxes and colored sector swatches. Header shows "▼ Sectors (N/M)" with an "All" checkbox that toggles all sectors (indeterminate when partially selected). Clicking the header text collapses/expands; clicking the checkbox toggles all. Selecting a sector auto-selects all its companies; deselecting removes them. All companies remain visible in the main list for manual cross-sector comparison.
+- **Data filters:** "ASX Listed" checkbox (default: on, filters to ~379 ASX-listed companies) and "Top N" dropdown (All / Top 100 / 200 / 500 / 1000 by total income in latest year). These compose with sector filters. Changing filters preserves existing sector/company selections where possible.
 - **Search input:** filters the checkbox list as user types
-- **Select all checkbox:** checked by default (all companies selected on load). Syncs with sector dropdown: checking selects all sectors and companies, unchecking clears all sectors and companies.
-- **Checkbox list:** scrollable list filling remaining height, with color swatches matching sector colors. Selected items are pinned to the top of the list.
+- **Select all checkbox:** checked by default (all companies selected on load). Syncs with sector panel: checking selects all sectors and companies, unchecking clears all sectors and companies.
+- **Checkbox list:** scrollable list filling remaining height, with color swatches matching sector colors. Selected items are pinned to the top when the list rebuilds (filter/mode changes), but individual checkbox clicks do not reorder the list.
 
 ### Responsive (< 600px)
 - Top bar stacks vertically
@@ -153,12 +161,12 @@ The app fills 85% of the viewport height (`85vh`) with a flex column layout, no 
 - Same colors used across all chart modes and views
 - Color swatches appear next to items in the checkbox list
 
-### Multi-Select Sector Filter
-- When viewing companies, a custom multi-select dropdown allows selecting one or more sectors
+### Collapsible Sector Panel
+- When viewing companies, a collapsible panel allows selecting one or more sectors
+- Header shows "▼ Sectors (N/M)" with an "All" checkbox (indeterminate when partially selected)
 - Each sector item shows a checkbox and colored swatch matching the sector color palette
-- "Check all" and "Clear all" buttons at top of dropdown for bulk operations
 - Selecting a sector checks all its companies in the main list; deselecting unchecks them
-- Select All checkbox syncs with sector dropdown (check = all sectors, uncheck = clear all)
+- Select All checkbox syncs with sector panel (check = all sectors, uncheck = clear all)
 - All companies remain visible regardless of sector selection, enabling cross-sector comparison
 
 ### Sector Drill-Down
@@ -207,7 +215,7 @@ The app fills 85% of the viewport height (`85vh`) with a flex column layout, no 
 | `index.html` | HTML shell with inline body style, CDN link for Plotly, script tags, container div |
 | `styles.css` | Scoped styles (`.taxchart-` prefix), responsive breakpoint at 600px |
 | `data.js` | Fetch CSV, parse with null handling, compute derived values, sector aggregation, build metadata (color maps, company/sector lists) |
-| `charts.js` | All four chart mode trace builders, layout builder, `Plotly.restyle` highlighting, drill-down handler, tooltip/value formatting |
+| `charts.js` | All five chart mode trace builders, layout builder, `Plotly.restyle` highlighting, drill-down handler, tooltip/value formatting |
 | `controls.js` | Config arrays (axis pairs, metrics, field labels), state object, app init, top controls, side panel with combined sector filter/highlight, checkbox list with pinning |
 
 ### Shared State
