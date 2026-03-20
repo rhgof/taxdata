@@ -155,6 +155,12 @@ combined <- bind_rows(all_data)
 message("Stage 1 complete: ", nrow(combined), " total rows from ", length(all_data), " files")
 stopifnot("Zero rows after ingest" = nrow(combined) > 0)
 
+# Write intermediate
+stage1_file <- file.path(pipeline_dir,
+  paste0(date_prefix, "-01-", pipeline_name, "-raw-combined.csv"))
+write_csv(combined, stage1_file, na = "")
+message("Wrote: ", stage1_file)
+
 # ---------------------------------------------------------------------------
 # Stage 2: Normalize — cleanse names, assign canonical names per ABN
 # ---------------------------------------------------------------------------
