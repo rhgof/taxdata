@@ -32,5 +32,5 @@ A browser-based interactive chart app for Australian corporate tax transparency 
 - UI filters in side panel: ASX Listed toggle (default: on, ~379 companies), Top N dropdown (100/200/500/1000/All by latest-year revenue)
 - Raw ATO data: Inputs/*.xlsx (11 years of corporate tax transparency reports)
 - Sector enrichment: Inputs/ASXListedCompanies.csv (ASX GICS) + Inputs/llm_classifications.json (manual) + Inputs/gics_sector_map.json (industry→sector)
-- Data pipeline: R/build_data.R generates test-data.csv from Inputs/ (requires readxl, readr, dplyr, jsonlite, stringr)
+- Data pipeline: R/build_data.R generates ato-tax-transparency.csv from Inputs/ (requires readxl, readr, dplyr, jsonlite, stringr)
 - Pipeline: name cleansing (LIMITED→LTD), canonical names per ABN (most recent year), GICS sector enrichment (ASX + LLM fallback), ASX Listed flag

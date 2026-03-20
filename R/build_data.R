@@ -20,7 +20,7 @@ library(stringr)
 # ---------------------------------------------------------------------------
 
 input_dir <- "Inputs"
-output_file <- "test-data.csv"
+output_file <- "ato-tax-transparency.csv"
 pipeline_dir <- "pipeline"
 date_prefix <- format(Sys.Date(), "%Y%m%d")
 pipeline_name <- "ato-tax"

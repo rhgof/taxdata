@@ -51,7 +51,7 @@ A browser-based interactive chart application that visualizes the full ATO corpo
 - **Tech stack:** Plain HTML, CSS, and JavaScript with Plotly.js 2.x via CDN. No build step, no framework. All styles scoped with `.taxchart-` prefix.
 - **Module structure:** Five files — `index.html` (shell), `styles.css` (scoped styles), `data.js` (CSV fetch/parse/derived values/aggregation), `charts.js` (trace builders, layout, formatting), `controls.js` (state management, UI controls, event handlers).
 - **State management:** A single global `window.TaxChart.state` object holding all UI state (mode, selections, filters, axis ranges). `controls.js` mutates state and calls `charts.js` to re-render.
-- **Data pipeline:** R script (`R/build_data.R`) using readxl, readr, dplyr, jsonlite, stringr. Ingests `Inputs/*.xlsx`, cleanses names (LIMITED to LTD), assigns canonical names per ABN (most recent year), enriches with GICS sectors from `Inputs/ASXListedCompanies.csv` + `Inputs/llm_classifications.json` + `Inputs/gics_sector_map.json`, outputs `test-data.csv`.
+- **Data pipeline:** R script (`R/build_data.R`) using readxl, readr, dplyr, jsonlite, stringr. Ingests `Inputs/*.xlsx`, cleanses names (LIMITED to LTD), assigns canonical names per ABN (most recent year), enriches with GICS sectors from `Inputs/ASXListedCompanies.csv` + `Inputs/llm_classifications.json` + `Inputs/gics_sector_map.json`, outputs `ato-tax-transparency.csv`.
 - **Data filtering:** Two-stage: first ASX Listed toggle, then Top N by latest-year Total Income. Filter controls are in the side panel alongside sector controls. Filters compose with sector selections. Changing filters recomputes `state.rows` from `state.allRows`.
 - **Axis ranges:** Pre-computed on data load, separate for company and sector views, with 5% padding. Prevents axes from jumping as selections change. Autoscale toggle computes range from selected data, rounding max up to the next nice tick (1/2/5 × 10^n).
 - **Sector colours:** Fixed 20-colour palette assigned alphabetically once on data load. Used consistently across all views and modes.
@@ -89,7 +89,7 @@ A browser-based interactive chart application that visualizes the full ATO corpo
 
 ## Data Pipeline
 
-The R script `R/build_data.R` transforms raw ATO xlsx files into the enriched CSV (`test-data.csv`) consumed by the app. Run from the project root with `Rscript R/build_data.R`. Requires R packages: readxl, readr, dplyr, jsonlite, stringr.
+The R script `R/build_data.R` transforms raw ATO xlsx files into the enriched CSV (`ato-tax-transparency.csv`) consumed by the app. Run from the project root with `Rscript R/build_data.R`. Requires R packages: readxl, readr, dplyr, jsonlite, stringr.
 
 ### Input Files
 
@@ -114,7 +114,7 @@ The R script `R/build_data.R` transforms raw ATO xlsx files into the enriched CS
    - Writes unmatched entities to pipeline directory sorted by revenue for review
    - Validates row count is preserved after joins
 
-4. **Output** — Selects final columns, sorts by Company then Financial Year, diffs against previous output (row count, new/removed entities), writes `test-data.csv`.
+4. **Output** — Selects final columns, sorts by Company then Financial Year, diffs against previous output (row count, new/removed entities), writes `ato-tax-transparency.csv`.
 
 ### Intermediate Files
 
@@ -131,7 +131,7 @@ When the ATO publishes a new year:
 2. Run `Rscript R/build_data.R`
 3. Review the diff output and unmatched entities file
 4. Optionally add sector classifications to `Inputs/llm_classifications.json` for top unmatched companies
-5. Re-run and commit the updated `test-data.csv`
+5. Re-run and commit the updated `ato-tax-transparency.csv`
 
 ### Enrichment Coverage
 
