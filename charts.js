@@ -477,6 +477,8 @@ TaxChart.getTraceValues = function(traces, axis) {
 TaxChart.buildLayout = function(traces) {
   traces = traces || [];
   var mode = TaxChart.state.mode;
+  var years = TaxChart.state.metadata.years;
+  var yearRange = years[0] + ' to ' + years[years.length - 1];
   var now = new Date();
   var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   var dateStr = now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
@@ -487,7 +489,7 @@ TaxChart.buildLayout = function(traces) {
     hovermode: 'closest',
     hoverlabel: { bgcolor: 'rgba(255,255,255,0.85)', bordercolor: '#ccc', font: { color: '#333' } },
     annotations: [{
-      text: 'Source: @deadinlongrun.bsky.social ' + dateStr,
+      text: 'Source: ATO Report of Entity Tax Information ' + yearRange + ' | @deadinlongrun.bsky.social ' + dateStr,
       xref: 'paper', yref: 'paper',
       x: 1,
       y: (mode === 'bar' || mode === 'bar-time' || mode === 'line') ? 1 : 0,

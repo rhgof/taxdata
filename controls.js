@@ -208,6 +208,15 @@ TaxChart.renderApp = function() {
   var container = TaxChart.container;
   container.innerHTML = '';
 
+  var title = document.createElement('div');
+  title.className = 'taxchart-title';
+  title.textContent = 'ATO Corporate Tax Transparency';
+
+  var years = TaxChart.state.metadata.years;
+  var subtitle = document.createElement('div');
+  subtitle.className = 'taxchart-subtitle';
+  subtitle.textContent = 'Report of Entity Tax Information ' + years[0] + ' to ' + years[years.length - 1];
+
   var topBar = document.createElement('div');
   topBar.className = 'taxchart-top-bar';
 
@@ -224,6 +233,8 @@ TaxChart.renderApp = function() {
   mainArea.appendChild(chartArea);
   mainArea.appendChild(sidePanel);
 
+  container.appendChild(title);
+  container.appendChild(subtitle);
   container.appendChild(topBar);
   container.appendChild(mainArea);
 
