@@ -87,6 +87,56 @@ A browser-based interactive chart application that visualizes the full ATO corpo
 - Bar chart tooltip cursor tracking (documented as future enhancement)
 - Floating sector legend overlay (code preserved but disabled)
 
+## Data Pipeline
+
+The R script `R/build_data.R` transforms raw ATO xlsx files into the enriched CSV (`test-data.csv`) consumed by the app. Run from the project root with `Rscript R/build_data.R`. Requires R packages: readxl, readr, dplyr, jsonlite, stringr.
+
+### Input Files
+
+| File | Purpose |
+|------|---------|
+| `Inputs/*.xlsx` | Raw ATO corporate tax transparency reports (11 years, 2013-14 to 2023-24) |
+| `Inputs/ASXListedCompanies.csv` | ASX-listed companies with GICS industry group classifications |
+| `Inputs/gics_sector_map.json` | Maps GICS industry groups to sector names with ASX index codes |
+| `Inputs/llm_classifications.json` | Manual/LLM-derived sector classifications for non-ASX companies |
+
+### Pipeline Stages
+
+1. **Ingest** — Reads all xlsx files, handling varying sheet names and column formats. Extracts Company, ABN, Total Income, Taxable Income, Tax Payable, and Financial Year. Logs coercion failures for numeric columns.
+
+2. **Normalize** — Cleanses company names (LIMITED→LTD), assigns canonical names per ABN using the most recent financial year (handles renames like CALTEX→AMPOL). Validates row count is preserved after join.
+
+3. **Enrich** — Matches companies to GICS sectors using two sources with fallback:
+   - **ASX** (primary): matches by normalised company name against ASX listed companies file, maps GICS industry group to sector via `gics_sector_map.json`
+   - **LLM** (fallback): matches unclassified companies against `llm_classifications.json`
+   - Tracks enrichment source per entity (`Sector_Source` column: "ASX", "LLM", or blank)
+   - Sets `ASX Listed` flag and `ASX Code` from ASX data
+   - Writes unmatched entities to pipeline directory sorted by revenue for review
+   - Validates row count is preserved after joins
+
+4. **Output** — Selects final columns, sorts by Company then Financial Year, diffs against previous output (row count, new/removed entities), writes `test-data.csv`.
+
+### Intermediate Files
+
+All intermediate files are written to `pipeline/` (git-ignored) with naming convention:
+```
+pipeline/YYYYMMDD-NN-ato-tax-{description}.csv
+```
+This enables debugging and resuming from any stage by commenting out earlier stages.
+
+### Adding New Data
+
+When the ATO publishes a new year:
+1. Add the xlsx file to `Inputs/`
+2. Run `Rscript R/build_data.R`
+3. Review the diff output and unmatched entities file
+4. Optionally add sector classifications to `Inputs/llm_classifications.json` for top unmatched companies
+5. Re-run and commit the updated `test-data.csv`
+
+### Enrichment Coverage
+
+As of March 2026: 379 entities classified via ASX GICS, 335 via LLM classifications, ~5,310 unclassified (mostly small private entities). Unclassified entities appear as "Unknown" sector in the app.
+
 ## Further Notes
 
 - The ATO publishes corporate tax transparency data annually, typically mid-year. The pipeline is designed to accommodate new years by adding xlsx files to `Inputs/` and re-running `build_data.R`.
