@@ -54,8 +54,8 @@ A browser-based interactive chart application that visualizes the full ATO corpo
 - **Data pipeline:** R script (`R/build_data.R`) using readxl, readr, dplyr, jsonlite, stringr. Ingests `Inputs/*.xlsx`, cleanses names (LIMITED to LTD), assigns canonical names per ABN (most recent year), enriches with GICS sectors from `Inputs/ASXListedCompanies.csv` + `Inputs/llm_classifications.json` + `Inputs/gics_sector_map.json`, outputs `ato-tax-transparency.csv`.
 - **Data filtering:** Two-stage: first ASX Listed toggle, then Top N by latest-year Total Income. Filter controls are in the side panel alongside sector controls. Filters compose with sector selections. Changing filters recomputes `state.rows` from `state.allRows`.
 - **Axis ranges:** Pre-computed on data load, separate for company and sector views, with 5% padding. Prevents axes from jumping as selections change. Autoscale toggle computes range from selected data, rounding max up to the next nice tick (1/2/5 × 10^n).
-- **Sector colours:** Fixed 20-colour palette assigned alphabetically once on data load. Used consistently across all views and modes.
-- **Sector aggregation:** Sum numeric columns per sector per year, recompute derived ratios on sums (not sum of ratios).
+- **Sector colours:** Fixed 20-colour palette assigned alphabetically once on data load. "Unclassified" gets a dedicated grey (`#999999`) and sorts last. Used consistently across all views and modes.
+- **Sector aggregation:** Sum numeric columns per sector per year, recompute derived ratios on sums (not sum of ratios). Companies without a sector classification are grouped under "Unclassified".
 - **Null handling:** Missing Taxable Income / Tax Payable parsed as null. Division by zero or null denominator produces null. Null values omitted from chart traces.
 - **Chart initialization:** `TaxChart.init(containerSelector)` reads `data-csv-url` attribute, fetches CSV, parses, renders. Embedding is a single `<div>` + `<script>` tag.
 - **Bar chart sorting:** Uses `categoryorder: 'trace'` with a sort-by dropdown (default: Total Income descending). Plotly legend disabled; side panel serves as legend.
@@ -135,7 +135,7 @@ When the ATO publishes a new year:
 
 ### Enrichment Coverage
 
-As of March 2026: 379 entities classified via ASX GICS, 335 via LLM classifications, ~5,310 unclassified (mostly small private entities). Unclassified entities appear as "Unknown" sector in the app.
+As of March 2026: 379 entities classified via ASX GICS, 335 via LLM classifications, ~5,310 unclassified (mostly small private entities). Unclassified entities appear as "Unclassified" sector in the app, with a dedicated grey swatch and checkbox in the sector panel.
 
 ## Further Notes
 

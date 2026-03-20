@@ -52,6 +52,7 @@ TaxChart.parseCSV = function(text) {
         row[headers[j]] = val;
       }
     }
+    if (!row['Sector']) row['Sector'] = 'Unclassified';
     rows.push(row);
   }
   return rows;
@@ -129,7 +130,6 @@ TaxChart.aggregateBySector = function(rows) {
   var groups = {};
 
   rows.forEach(function(row) {
-    if (!row['Sector']) return; // skip companies without sector assignment
     var key = row['Sector'] + '||' + row['Financial Year'];
     if (!groups[key]) {
       groups[key] = {
@@ -191,16 +191,26 @@ TaxChart.buildMetadata = function(rows) {
     if (sector && sectors.indexOf(sector) === -1) sectors.push(sector);
     if (companies.indexOf(row['Company']) === -1) companies.push(row['Company']);
     if (years.indexOf(row['Financial Year']) === -1) years.push(row['Financial Year']);
-    companySectorMap[row['Company']] = sector || '';
+    companySectorMap[row['Company']] = sector;
   });
 
-  sectors.sort();
+  sectors.sort(function(a, b) {
+    if (a === 'Unclassified') return 1;
+    if (b === 'Unclassified') return -1;
+    return a < b ? -1 : a > b ? 1 : 0;
+  });
   companies.sort();
   years.sort();
 
   var sectorColorMap = {};
-  sectors.forEach(function(s, i) {
-    sectorColorMap[s] = TaxChart.SECTOR_COLORS[i % TaxChart.SECTOR_COLORS.length];
+  var colorIdx = 0;
+  sectors.forEach(function(s) {
+    if (s === 'Unclassified') {
+      sectorColorMap[s] = '#999999';
+    } else {
+      sectorColorMap[s] = TaxChart.SECTOR_COLORS[colorIdx % TaxChart.SECTOR_COLORS.length];
+      colorIdx++;
+    }
   });
 
   return {
