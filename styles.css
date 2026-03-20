@@ -137,15 +137,17 @@
   margin-bottom: 6px;
 }
 
-.taxchart-search-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 10px;
+.taxchart-select-count {
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  white-space: nowrap;
 }
 
 .taxchart-search {
   flex: 1;
+  width: 100%;
+  box-sizing: border-box;
   padding: 6px 10px;
   font-size: 13px;
   border: 1px solid #ccc;

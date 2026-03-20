@@ -57,6 +57,7 @@ TaxChart.state = {
   pinnedLabels: {},
   logScaleX: false,
   logScaleY: false,
+  autoScale: false,
   asxOnly: true,
   topN: 0,
   allRows: [],
@@ -267,6 +268,52 @@ TaxChart.buildTopControls = function() {
   });
   bar.appendChild(modeGroup);
 
+  // Scale options row: Log X, Log Y, Autoscale (forced onto new line)
+  var scaleRow = document.createElement('div');
+  scaleRow.className = 'taxchart-control-group';
+  scaleRow.style.width = '100%';
+
+  var logXLabel = document.createElement('label');
+  logXLabel.className = 'taxchart-label';
+  var logXCheck = document.createElement('input');
+  logXCheck.type = 'checkbox';
+  logXCheck.checked = TaxChart.state.logScaleX;
+  logXCheck.addEventListener('change', function() {
+    TaxChart.state.logScaleX = this.checked;
+    TaxChart.updateChart();
+  });
+  logXLabel.appendChild(logXCheck);
+  logXLabel.appendChild(document.createTextNode(' Log X'));
+
+  var logYLabel = document.createElement('label');
+  logYLabel.className = 'taxchart-label';
+  var logYCheck = document.createElement('input');
+  logYCheck.type = 'checkbox';
+  logYCheck.checked = TaxChart.state.logScaleY;
+  logYCheck.addEventListener('change', function() {
+    TaxChart.state.logScaleY = this.checked;
+    TaxChart.updateChart();
+  });
+  logYLabel.appendChild(logYCheck);
+  logYLabel.appendChild(document.createTextNode(' Log Y'));
+
+  var autoScaleLabel = document.createElement('label');
+  autoScaleLabel.className = 'taxchart-label';
+  var autoScaleCheck = document.createElement('input');
+  autoScaleCheck.type = 'checkbox';
+  autoScaleCheck.checked = TaxChart.state.autoScale;
+  autoScaleCheck.addEventListener('change', function() {
+    TaxChart.state.autoScale = this.checked;
+    TaxChart.updateChart();
+  });
+  autoScaleLabel.appendChild(autoScaleCheck);
+  autoScaleLabel.appendChild(document.createTextNode(' Autoscale'));
+
+  scaleRow.appendChild(logXLabel);
+  scaleRow.appendChild(logYLabel);
+  scaleRow.appendChild(autoScaleLabel);
+  bar.appendChild(scaleRow);
+
   // Axis pair / metric dropdown
   var axisGroup = document.createElement('div');
   axisGroup.className = 'taxchart-control-group';
@@ -368,38 +415,6 @@ TaxChart.buildTopControls = function() {
     bar.appendChild(sortGroup);
   }
 
-  // Log scale toggles
-  var logGroup = document.createElement('div');
-  logGroup.className = 'taxchart-control-group';
-
-  var logXLabel = document.createElement('label');
-  logXLabel.className = 'taxchart-label';
-  var logXCheck = document.createElement('input');
-  logXCheck.type = 'checkbox';
-  logXCheck.checked = TaxChart.state.logScaleX;
-  logXCheck.addEventListener('change', function() {
-    TaxChart.state.logScaleX = this.checked;
-    TaxChart.updateChart();
-  });
-  logXLabel.appendChild(logXCheck);
-  logXLabel.appendChild(document.createTextNode(' Log X'));
-
-  var logYLabel = document.createElement('label');
-  logYLabel.className = 'taxchart-label';
-  var logYCheck = document.createElement('input');
-  logYCheck.type = 'checkbox';
-  logYCheck.checked = TaxChart.state.logScaleY;
-  logYCheck.addEventListener('change', function() {
-    TaxChart.state.logScaleY = this.checked;
-    TaxChart.updateChart();
-  });
-  logYLabel.appendChild(logYCheck);
-  logYLabel.appendChild(document.createTextNode(' Log Y'));
-
-  logGroup.appendChild(logXLabel);
-  logGroup.appendChild(logYLabel);
-  bar.appendChild(logGroup);
-
 };
 
 // Build the side panel: companies/sectors toggle, sector filter dropdown
@@ -437,25 +452,26 @@ TaxChart.buildSidePanel = function() {
   });
   panel.appendChild(toggleRow);
 
+  // Sector panel (companies view only)
   if (TaxChart.state.viewBy === 'companies') {
     var sectorPanel = document.createElement('div');
     sectorPanel.className = 'taxchart-sector-panel';
 
-    var panelHeader = document.createElement('div');
-    panelHeader.className = 'taxchart-sector-panel-header';
-    var panelCollapsed = false;
+    var sectorHeader = document.createElement('div');
+    sectorHeader.className = 'taxchart-sector-panel-header';
+    var sectorCollapsed = false;
 
     var allSectorsCb = document.createElement('input');
     allSectorsCb.type = 'checkbox';
     allSectorsCb.style.margin = '0 4px 0 0';
 
-    var panelLabel = document.createElement('span');
-    panelLabel.style.flex = '1';
+    var sectorLabel = document.createElement('span');
+    sectorLabel.style.flex = '1';
 
-    function updatePanelHeader() {
+    function updateSectorHeader() {
       var count = Object.keys(TaxChart.state.selectedSectors).length;
       var total = TaxChart.state.metadata.sectors.length;
-      panelLabel.textContent = (panelCollapsed ? '\u25B6' : '\u25BC') + ' Sectors (' + count + '/' + total + ')';
+      sectorLabel.textContent = (sectorCollapsed ? '\u25B6' : '\u25BC') + ' Sectors (' + count + '/' + total + ')';
       allSectorsCb.checked = count === total;
       allSectorsCb.indeterminate = count > 0 && count < total;
     }
@@ -467,24 +483,24 @@ TaxChart.buildSidePanel = function() {
       } else {
         TaxChart.clearAllSectors();
       }
-      updatePanelHeader();
+      updateSectorHeader();
       TaxChart.syncSectorUI();
       TaxChart.updateCheckboxList();
       TaxChart.updateChart();
     });
 
-    panelHeader.appendChild(allSectorsCb);
-    panelHeader.appendChild(panelLabel);
-    updatePanelHeader();
+    sectorHeader.appendChild(allSectorsCb);
+    sectorHeader.appendChild(sectorLabel);
+    updateSectorHeader();
 
-    var panelBody = document.createElement('div');
-    panelBody.className = 'taxchart-sector-panel-body';
+    var sectorBody = document.createElement('div');
+    sectorBody.className = 'taxchart-sector-panel-body';
 
-    panelHeader.addEventListener('click', function(e) {
+    sectorHeader.addEventListener('click', function(e) {
       if (e.target === allSectorsCb) return;
-      panelCollapsed = !panelCollapsed;
-      panelBody.style.display = panelCollapsed ? 'none' : 'block';
-      updatePanelHeader();
+      sectorCollapsed = !sectorCollapsed;
+      sectorBody.style.display = sectorCollapsed ? 'none' : 'block';
+      updateSectorHeader();
     });
 
     var panelCheckboxes = {};
@@ -500,7 +516,7 @@ TaxChart.buildSidePanel = function() {
       cb.addEventListener('change', function(e) {
         e.stopPropagation();
         TaxChart.toggleSector(s, this.checked);
-        updatePanelHeader();
+        updateSectorHeader();
         TaxChart.syncSectorUI();
         TaxChart.updateCheckboxList();
         TaxChart.updateChart();
@@ -513,11 +529,11 @@ TaxChart.buildSidePanel = function() {
       item.appendChild(cb);
       item.appendChild(swatch);
       item.appendChild(document.createTextNode(' ' + s));
-      panelBody.appendChild(item);
+      sectorBody.appendChild(item);
     });
 
-    sectorPanel.appendChild(panelHeader);
-    sectorPanel.appendChild(panelBody);
+    sectorPanel.appendChild(sectorHeader);
+    sectorPanel.appendChild(sectorBody);
     panel.appendChild(sectorPanel);
 
     TaxChart._updateCollapsiblePanel = function() {
@@ -526,9 +542,78 @@ TaxChart.buildSidePanel = function() {
           panelCheckboxes[s].checked = !!TaxChart.state.selectedSectors[s];
         }
       });
-      updatePanelHeader();
+      updateSectorHeader();
     };
   }
+
+  // Companies/entities collapsible panel: header + body (filters, search, list)
+  var companyPanel = document.createElement('div');
+  companyPanel.className = 'taxchart-sector-panel';
+
+  var companyHeader = document.createElement('div');
+  companyHeader.className = 'taxchart-sector-panel-header';
+  var companiesCollapsed = false;
+
+  var selectAllCb = document.createElement('input');
+  selectAllCb.type = 'checkbox';
+  selectAllCb.id = 'taxchart-select-all';
+  selectAllCb.style.margin = '0 4px 0 0';
+
+  var companyLabel = document.createElement('span');
+  companyLabel.style.flex = '1';
+
+  var selectCountLabel = document.createElement('span');
+  selectCountLabel.id = 'taxchart-select-count';
+  selectCountLabel.className = 'taxchart-select-count';
+
+  var entityName = TaxChart.state.viewBy === 'companies' ? 'Companies' : 'Sectors';
+
+  function updateCompaniesHeader() {
+    var visibleItems = TaxChart.getVisibleItems();
+    var selectedCount = visibleItems.filter(function(item) { return !!TaxChart.state.selected[item]; }).length;
+    companyLabel.textContent = (companiesCollapsed ? '\u25B6' : '\u25BC') + ' ' + entityName;
+    selectCountLabel.textContent = selectedCount + '/' + visibleItems.length;
+    selectAllCb.checked = visibleItems.length > 0 && selectedCount === visibleItems.length;
+    selectAllCb.indeterminate = selectedCount > 0 && selectedCount < visibleItems.length;
+  }
+
+  selectAllCb.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (TaxChart.state.viewBy === 'companies') {
+      if (this.checked) {
+        TaxChart.selectAllSectors();
+      } else {
+        TaxChart.clearAllSectors();
+      }
+      TaxChart.syncSectorUI();
+    } else {
+      var items = TaxChart.getVisibleItems();
+      if (this.checked) {
+        items.forEach(function(item) { TaxChart.state.selected[item] = true; });
+      } else {
+        items.forEach(function(item) { delete TaxChart.state.selected[item]; });
+      }
+    }
+    updateCompaniesHeader();
+    TaxChart.updateCheckboxList();
+    TaxChart.updateChart();
+  });
+
+  var companyBody = document.createElement('div');
+  companyBody.className = 'taxchart-sector-panel-body';
+
+  companyHeader.addEventListener('click', function(e) {
+    if (e.target === selectAllCb) return;
+    companiesCollapsed = !companiesCollapsed;
+    companyBody.style.display = companiesCollapsed ? 'none' : 'block';
+    updateCompaniesHeader();
+  });
+
+  companyHeader.appendChild(selectAllCb);
+  companyHeader.appendChild(companyLabel);
+  companyHeader.appendChild(selectCountLabel);
+  updateCompaniesHeader();
+  companyPanel.appendChild(companyHeader);
 
   // Data filter controls: ASX Listed toggle + Top N dropdown
   var filterRow = document.createElement('div');
@@ -568,66 +653,31 @@ TaxChart.buildSidePanel = function() {
     TaxChart.rebuildAfterFilter();
   });
   filterRow.appendChild(topNSelect);
-  panel.appendChild(filterRow);
+  companyBody.appendChild(filterRow);
 
-  var searchRow = document.createElement('div');
-  searchRow.className = 'taxchart-search-row';
+  // Search box
   var searchInput = document.createElement('input');
   searchInput.type = 'text';
   searchInput.className = 'taxchart-search';
+  searchInput.style.marginTop = '4px';
   searchInput.placeholder = TaxChart.state.viewBy === 'companies' ? 'Search companies...' : 'Search sectors...';
   searchInput.addEventListener('input', function() {
     TaxChart._searchTerm = this.value.toLowerCase();
     TaxChart.updateCheckboxList();
   });
+  companyBody.appendChild(searchInput);
 
-  var selectAllLabel = document.createElement('label');
-  selectAllLabel.className = 'taxchart-label';
-  selectAllLabel.style.whiteSpace = 'nowrap';
-  var selectAllCb = document.createElement('input');
-  selectAllCb.type = 'checkbox';
-  selectAllCb.id = 'taxchart-select-all';
-  var visibleItems = TaxChart.getVisibleItems();
-  var allSelected = visibleItems.length > 0 && visibleItems.every(function(item) {
-    return !!TaxChart.state.selected[item];
-  });
-  selectAllCb.checked = allSelected;
-  selectAllCb.addEventListener('change', function() {
-    if (TaxChart.state.viewBy === 'companies') {
-      // Sync with sector dropdown
-      if (this.checked) {
-        TaxChart.selectAllSectors();
-      } else {
-        TaxChart.clearAllSectors();
-      }
-      TaxChart.syncSectorUI();
-    } else {
-      // Sectors view — just toggle all visible items
-      var items = TaxChart.getVisibleItems();
-      if (this.checked) {
-        items.forEach(function(item) {
-          TaxChart.state.selected[item] = true;
-        });
-      } else {
-        items.forEach(function(item) {
-          delete TaxChart.state.selected[item];
-        });
-      }
-    }
-    TaxChart.updateCheckboxList();
-    TaxChart.updateChart();
-  });
-  selectAllLabel.appendChild(selectAllCb);
-  selectAllLabel.appendChild(document.createTextNode(' Select all'));
-
-  searchRow.appendChild(searchInput);
-  searchRow.appendChild(selectAllLabel);
-  panel.appendChild(searchRow);
-
+  // Company/sector checkbox list
   var listContainer = document.createElement('div');
   listContainer.className = 'taxchart-list';
   listContainer.id = 'taxchart-list';
-  panel.appendChild(listContainer);
+  companyBody.appendChild(listContainer);
+
+  companyPanel.appendChild(companyBody);
+  panel.appendChild(companyPanel);
+
+  // Store updateCompaniesHeader for external calls
+  TaxChart._updateCompaniesHeader = updateCompaniesHeader;
 
   TaxChart._searchTerm = '';
   TaxChart._sectorFilter = '';
@@ -680,14 +730,8 @@ TaxChart.updateCheckboxList = function() {
       } else {
         delete TaxChart.state.selected[item];
       }
-      // Update select-all checkbox without rebuilding the list (avoids reordering mid-click)
-      var selectAllCb = document.getElementById('taxchart-select-all');
-      if (selectAllCb) {
-        var visibleItems = TaxChart.getVisibleItems();
-        selectAllCb.checked = visibleItems.length > 0 && visibleItems.every(function(v) {
-          return !!TaxChart.state.selected[v];
-        });
-      }
+      // Update header without rebuilding the list (avoids reordering mid-click)
+      if (TaxChart._updateCompaniesHeader) TaxChart._updateCompaniesHeader();
       TaxChart.updateChart();
     });
 
@@ -704,14 +748,8 @@ TaxChart.updateCheckboxList = function() {
     listEl.appendChild(label);
   });
 
-  // Update select-all checkbox state
-  var selectAllCb = document.getElementById('taxchart-select-all');
-  if (selectAllCb) {
-    var visibleItems = TaxChart.getVisibleItems();
-    selectAllCb.checked = visibleItems.length > 0 && visibleItems.every(function(item) {
-      return !!TaxChart.state.selected[item];
-    });
-  }
+  // Update header checkbox and count
+  if (TaxChart._updateCompaniesHeader) TaxChart._updateCompaniesHeader();
 };
 
 // Toggle a single sector and its companies

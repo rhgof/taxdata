@@ -9,15 +9,16 @@ A browser-based interactive chart app for Australian corporate tax transparency 
 - "Total Income (Revenue)" used consistently in all labels, tooltips, and dropdowns
 - Chart modes: Scatter, Scatter with Trails, Bar, Bar (Time), Line
 - Trails: filled circles for latest year, open circles for prior years
-- Side panel with company/sector selection (checkboxes, search, select all checkbox, selected pinned to top on list rebuild)
-- Collapsible sector panel in side panel with checkboxes, colored swatches, "All" checkbox in header
-- Floating sector legend overlay on chart area (code preserved but disabled, may re-enable later)
-- Select All checkbox syncs with sector controls (check = all sectors, uncheck = clear all)
+- Side panel: Companies/Sectors toggle, then collapsible sector panel, then collapsible companies panel
+- Sector panel: "All" checkbox in header, colored swatches, individual sector checkboxes
+- Companies panel: select-all checkbox in header with count (N/total), contains ASX/Top N filters, search box, company list
+- Selected items pinned to top on list rebuild (filter/mode changes) but not on individual checkbox clicks
 - Sector drill-down, consistent sector color palette
 - Pre-defined axis pairs for scatter; single metric dropdown for bar/bar-time/line
 - Year slider for scatter/bar modes (bar-time shows all years like line)
-- Log scale toggles (Log X, Log Y) with gridlines on powers of 10
-- Fixed axis ranges: separate min/max for company view vs sector view, 5% padding
+- Log scale toggles (Log X, Log Y) with gridlines on powers of 10, on second row below chart mode buttons
+- Autoscale toggle (default off): scales axes to selected data; off = fixed to global min/max
+- Fixed axis ranges (default): separate min/max for company view vs sector view, 5% padding
 - Bar chart: sort-by dropdown (default: Total Income), vertical labels, no Plotly legend
 - Scatter/trails: auto-label top 5 companies by y-value, click any dot to toggle label
 - Full tooltips across all chart modes (company, sector, country, all metrics, year)
@@ -26,7 +27,7 @@ A browser-based interactive chart app for Australian corporate tax transparency 
 - Empty chart with axes shown when no data selected (no placeholder text)
 - Tech: plain HTML/CSS/JS, Plotly.js 2.x via CDN, no build step
 - Files: index.html, styles.css, data.js, charts.js, controls.js, R/build_data.R
-- Design spec: docs/superpowers/specs/2026-03-16-tax-chart-app-design.md
+- PRD: docs/PRD-tax-chart-app.md
 - Data: all ATO corporate tax transparency entities (~6,025), 11 years (2013-14 to 2023-24), ~28,554 rows
 - UI filters in side panel: ASX Listed toggle (default: on, ~379 companies), Top N dropdown (100/200/500/1000/All by latest-year revenue)
 - Raw ATO data: Inputs/*.xlsx (11 years of corporate tax transparency reports)

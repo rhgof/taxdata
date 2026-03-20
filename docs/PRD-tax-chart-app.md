@@ -30,20 +30,21 @@ A browser-based interactive chart application that visualizes the full ATO corpo
 18. As a user, I want a Select All checkbox that syncs with sector controls, so that I can quickly select or clear all companies.
 19. As a researcher, I want derived metrics (Tax Rate, Taxable Income Margin, Tax Revenue Rate) computed automatically, so that I can analyse effective tax rates without manual calculation.
 20. As a user, I want the app to fit within 85% viewport height without scrolling, so that it works well embedded in a larger page.
-21. As a user, I want the chart axes to remain fixed regardless of my selections, so that the scale doesn't jump around when I add or remove companies.
+21. As a user, I want the chart axes to remain fixed by default regardless of my selections, so that the scale doesn't jump around when I add or remove companies.
 22. As a researcher, I want separate axis ranges for company vs sector views, so that sector aggregates don't inflate the scale when I'm looking at individual companies.
-23. As a user, I want the app to handle missing Taxable Income and Tax Payable gracefully (they're blank under ATO rules), so that companies with null values don't break the chart.
-24. As a user, I want source attribution displayed on the chart, so that I know where the data comes from.
-25. As a user, I want the app to work on screens as narrow as 600px with controls stacking vertically, so that it's usable on smaller displays.
-26. As a data maintainer, I want a reproducible R pipeline (`build_data.R`) that ingests raw ATO xlsx files, cleanses names, matches companies by ABN across years, enriches with GICS sectors, and outputs a single CSV, so that the dataset can be rebuilt when new years are published.
-27. As a data maintainer, I want the pipeline to use canonical company names from the most recent year (handling renames like CALTEX to AMPOL), so that company identities are consistent across the time series.
-28. As a user, I want line charts showing one line per company/sector over all financial years, so that I can see trends over the full 11-year period.
-29. As a user, I want a bar-over-time chart showing grouped bars per year for selected companies/sectors, so that I can compare magnitudes side-by-side across years using bars instead of lines.
-29. As a user, I want auto-labels on the top 5 companies by y-value in scatter/trails modes, so that major companies are immediately identifiable.
-30. As a user, I want to click any data point to toggle its label on or off, so that I can label specific companies of interest.
-31. As a user, I want bar chart labels angled at -45 degrees, so that company names are readable without overlapping.
-32. As a user, I want an empty chart with axes shown (no placeholder text) when nothing is selected, so that the interface remains clean.
-33. As a user, I want changing ASX or Top N filters to preserve my existing sector and company selections where possible, so that I don't lose my work when adjusting filters.
+23. As a user, I want an autoscale toggle that fits the axes to the selected data (one tick above the max), so that I can zoom in on a subset of companies without the full dataset's scale dominating.
+24. As a user, I want the app to handle missing Taxable Income and Tax Payable gracefully (they're blank under ATO rules), so that companies with null values don't break the chart.
+25. As a user, I want source attribution displayed on the chart, so that I know where the data comes from.
+26. As a user, I want the app to work on screens as narrow as 600px with controls stacking vertically, so that it's usable on smaller displays.
+27. As a data maintainer, I want a reproducible R pipeline (`build_data.R`) that ingests raw ATO xlsx files, cleanses names, matches companies by ABN across years, enriches with GICS sectors, and outputs a single CSV, so that the dataset can be rebuilt when new years are published.
+28. As a data maintainer, I want the pipeline to use canonical company names from the most recent year (handling renames like CALTEX to AMPOL), so that company identities are consistent across the time series.
+29. As a user, I want line charts showing one line per company/sector over all financial years, so that I can see trends over the full 11-year period.
+30. As a user, I want a bar-over-time chart showing grouped bars per year for selected companies/sectors, so that I can compare magnitudes side-by-side across years using bars instead of lines.
+31. As a user, I want auto-labels on the top 5 companies by y-value in scatter/trails modes, so that major companies are immediately identifiable.
+32. As a user, I want to click any data point to toggle its label on or off, so that I can label specific companies of interest.
+33. As a user, I want bar chart labels angled at -45 degrees, so that company names are readable without overlapping.
+34. As a user, I want an empty chart with axes shown (no placeholder text) when nothing is selected, so that the interface remains clean.
+35. As a user, I want changing ASX or Top N filters to preserve my existing sector and company selections where possible, so that I don't lose my work when adjusting filters.
 
 ## Implementation Decisions
 
@@ -52,7 +53,7 @@ A browser-based interactive chart application that visualizes the full ATO corpo
 - **State management:** A single global `window.TaxChart.state` object holding all UI state (mode, selections, filters, axis ranges). `controls.js` mutates state and calls `charts.js` to re-render.
 - **Data pipeline:** R script (`R/build_data.R`) using readxl, readr, dplyr, jsonlite, stringr. Ingests `Inputs/*.xlsx`, cleanses names (LIMITED to LTD), assigns canonical names per ABN (most recent year), enriches with GICS sectors from `Inputs/ASXListedCompanies.csv` + `Inputs/llm_classifications.json` + `Inputs/gics_sector_map.json`, outputs `test-data.csv`.
 - **Data filtering:** Two-stage: first ASX Listed toggle, then Top N by latest-year Total Income. Filter controls are in the side panel alongside sector controls. Filters compose with sector selections. Changing filters recomputes `state.rows` from `state.allRows`.
-- **Axis ranges:** Pre-computed on data load, separate for company and sector views, with 5% padding. Prevents axes from jumping as selections change.
+- **Axis ranges:** Pre-computed on data load, separate for company and sector views, with 5% padding. Prevents axes from jumping as selections change. Autoscale toggle computes range from selected data, rounding max up to the next nice tick (1/2/5 × 10^n).
 - **Sector colours:** Fixed 20-colour palette assigned alphabetically once on data load. Used consistently across all views and modes.
 - **Sector aggregation:** Sum numeric columns per sector per year, recompute derived ratios on sums (not sum of ratios).
 - **Null handling:** Missing Taxable Income / Tax Payable parsed as null. Division by zero or null denominator produces null. Null values omitted from chart traces.
@@ -65,6 +66,14 @@ A browser-based interactive chart application that visualizes the full ATO corpo
 - **No automated test suite.** This is a single-page data visualization app with no build step. Testing is manual: load the app, verify chart modes render correctly, check tooltips, test filter combinations, verify responsive layout.
 - **Data pipeline validation:** The R script output can be spot-checked against raw ATO xlsx files for row counts, company name consistency, and sector assignments.
 - **Browser testing:** Verify in Chrome and Safari on desktop. Responsive breakpoint at 600px.
+
+## Error Handling
+
+- **CSV fetch fails:** inline error message in chart area ("Unable to load data: [error]")
+- **No data-csv-url attribute:** inline error message
+- **No selections:** empty chart with axes shown
+- **Missing/bad numeric values:** parsed as null, skipped in charts
+- **Division by zero:** derived values where denominator is zero or null → null (omitted from chart)
 
 ## Out of Scope
 

@@ -33,7 +33,7 @@ TaxChart.updateChart = function() {
     if (!traces) traces = [];
   }
 
-  var layout = TaxChart.buildLayout();
+  var layout = TaxChart.buildLayout(traces);
   Plotly.newPlot(el, traces, layout, { responsive: true });
 
   // Attach drill-down click handler for sector view
@@ -414,24 +414,68 @@ TaxChart.buildLineTraces = function() {
 
 // Compute axis range with 5% padding. Uses separate min/max for company vs sector view.
 // For log scale, pads in log-space so the padding is proportional.
-TaxChart.getAxisRange = function(field, isLog) {
-  var ranges = TaxChart.state.viewBy === 'sectors'
-    ? TaxChart.state.axisRangesSectors
-    : TaxChart.state.axisRangesCompanies;
-  var r = ranges ? ranges[field] : null;
-  if (!r) return undefined;
+// When autoScale is on, computes range from actual trace data instead of global min/max.
+TaxChart.getAxisRange = function(field, isLog, traceValues) {
+  var min, max;
+  if (TaxChart.state.autoScale && traceValues && traceValues.length > 0) {
+    // Compute from selected data
+    var vals = traceValues.filter(function(v) { return v != null && isFinite(v); });
+    if (vals.length === 0) return undefined;
+    min = Math.min.apply(null, vals);
+    max = Math.max.apply(null, vals);
+    // Round max up to next nice tick
+    max = TaxChart.niceMax(max);
+    if (min > 0) min = 0;
+  } else if (!TaxChart.state.autoScale) {
+    var ranges = TaxChart.state.viewBy === 'sectors'
+      ? TaxChart.state.axisRangesSectors
+      : TaxChart.state.axisRangesCompanies;
+    var r = ranges ? ranges[field] : null;
+    if (!r) return undefined;
+    min = r.min;
+    max = r.max;
+  } else {
+    return undefined;
+  }
   if (isLog) {
-    var logMin = r.min > 0 ? Math.log10(r.min) : 0;
-    var logMax = r.max > 0 ? Math.log10(r.max) : 1;
+    var logMin = min > 0 ? Math.log10(min) : 0;
+    var logMax = max > 0 ? Math.log10(max) : 1;
     var pad = (logMax - logMin) * 0.05;
     return [logMin - pad, logMax + pad];
   }
-  var pad = (r.max - r.min) * 0.05;
-  return [Math.max(0, r.min - pad), r.max + pad];
+  var pad = (max - min) * 0.05;
+  return [Math.max(0, min - pad), max + pad];
+};
+
+// Round up to the next "nice" number (1, 2, 5 × 10^n) for axis ticks
+TaxChart.niceMax = function(val) {
+  if (val <= 0) return 1;
+  var exp = Math.floor(Math.log10(val));
+  var base = Math.pow(10, exp);
+  var mantissa = val / base;
+  if (mantissa <= 1) return base;
+  if (mantissa <= 2) return 2 * base;
+  if (mantissa <= 5) return 5 * base;
+  return 10 * base;
+};
+
+// Extract all numeric values for a given axis ('x' or 'y') from traces
+TaxChart.getTraceValues = function(traces, axis) {
+  var vals = [];
+  traces.forEach(function(t) {
+    var arr = t[axis];
+    if (arr) {
+      arr.forEach(function(v) {
+        if (typeof v === 'number' && isFinite(v)) vals.push(v);
+      });
+    }
+  });
+  return vals;
 };
 
 // Build the Plotly layout: axes, tick formatting, log scale, and source annotation
-TaxChart.buildLayout = function() {
+TaxChart.buildLayout = function(traces) {
+  traces = traces || [];
   var mode = TaxChart.state.mode;
   var now = new Date();
   var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -454,19 +498,29 @@ TaxChart.buildLayout = function() {
     }]
   };
 
+  // Helper: apply computed range to an axis config
+  function applyRange(axis, range) {
+    if (range) {
+      axis.range = range;
+    }
+  }
+
+  var xVals = TaxChart.getTraceValues(traces, 'x');
+  var yVals = TaxChart.getTraceValues(traces, 'y');
+
   if (mode === 'scatter' || mode === 'trails') {
     var pair = TaxChart.AXIS_PAIRS[TaxChart.state.axisPairIndex];
     var labels = TaxChart.FIELD_LABELS;
     layout.xaxis = {
       title: labels[pair.x] || pair.x,
-      type: TaxChart.state.logScaleX ? 'log' : 'linear',
-      range: TaxChart.getAxisRange(pair.x, TaxChart.state.logScaleX)
+      type: TaxChart.state.logScaleX ? 'log' : 'linear'
     };
+    applyRange(layout.xaxis, TaxChart.getAxisRange(pair.x, TaxChart.state.logScaleX, xVals));
     layout.yaxis = {
       title: labels[pair.y] || pair.y,
-      type: TaxChart.state.logScaleY ? 'log' : 'linear',
-      range: TaxChart.getAxisRange(pair.y, TaxChart.state.logScaleY)
+      type: TaxChart.state.logScaleY ? 'log' : 'linear'
     };
+    applyRange(layout.yaxis, TaxChart.getAxisRange(pair.y, TaxChart.state.logScaleY, yVals));
     // Log scale: gridlines on powers of 10
     if (TaxChart.state.logScaleX) layout.xaxis.dtick = 1;
     if (TaxChart.state.logScaleY) layout.yaxis.dtick = 1;
@@ -478,24 +532,24 @@ TaxChart.buildLayout = function() {
       layout.xaxis = { title: '', categoryorder: 'trace', tickangle: -90, tickfont: { size: 10 } };
       layout.yaxis = {
         title: metric.label,
-        type: TaxChart.state.logScaleY ? 'log' : 'linear',
-        range: TaxChart.getAxisRange(metric.field, TaxChart.state.logScaleY)
+        type: TaxChart.state.logScaleY ? 'log' : 'linear'
       };
+      applyRange(layout.yaxis, TaxChart.getAxisRange(metric.field, TaxChart.state.logScaleY, yVals));
     } else if (mode === 'bar-time') {
       layout.xaxis = { title: 'Financial Year', type: 'category', categoryorder: 'array', categoryarray: TaxChart.state.metadata.years };
       layout.yaxis = {
         title: metric.label,
-        type: TaxChart.state.logScaleY ? 'log' : 'linear',
-        range: TaxChart.getAxisRange(metric.field, TaxChart.state.logScaleY)
+        type: TaxChart.state.logScaleY ? 'log' : 'linear'
       };
+      applyRange(layout.yaxis, TaxChart.getAxisRange(metric.field, TaxChart.state.logScaleY, yVals));
       layout.barmode = 'group';
     } else {
       layout.xaxis = { title: 'Financial Year', type: 'category', categoryorder: 'array', categoryarray: TaxChart.state.metadata.years };
       layout.yaxis = {
         title: metric.label,
-        type: TaxChart.state.logScaleY ? 'log' : 'linear',
-        range: TaxChart.getAxisRange(metric.field, TaxChart.state.logScaleY)
+        type: TaxChart.state.logScaleY ? 'log' : 'linear'
       };
+      applyRange(layout.yaxis, TaxChart.getAxisRange(metric.field, TaxChart.state.logScaleY, yVals));
     }
     if (TaxChart.state.logScaleY) layout.yaxis.dtick = 1;
     if (['Tax Rate', 'Taxable Income Margin', 'Tax Revenue Rate'].indexOf(metric.field) !== -1) layout.yaxis.tickformat = '.0%';
