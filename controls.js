@@ -766,6 +766,12 @@ TaxChart.updateCheckboxList = function() {
     label.appendChild(cb);
     label.appendChild(swatch);
     label.appendChild(document.createTextNode(' ' + item));
+    label.addEventListener('mouseenter', (function(name) {
+      return function() { TaxChart.highlightCompany(name); };
+    })(item));
+    label.addEventListener('mouseleave', function() {
+      TaxChart.highlightCompany(null);
+    });
     listEl.appendChild(label);
   });
 

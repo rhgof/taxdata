@@ -425,7 +425,6 @@ TaxChart.getAxisRange = function(field, isLog, traceValues) {
     max = Math.max.apply(null, vals);
     // Round max up to next nice tick
     max = TaxChart.niceMax(max);
-    if (min > 0) min = 0;
   } else if (!TaxChart.state.autoScale) {
     var ranges = TaxChart.state.viewBy === 'sectors'
       ? TaxChart.state.axisRangesSectors
@@ -444,7 +443,9 @@ TaxChart.getAxisRange = function(field, isLog, traceValues) {
     return [logMin - pad, logMax + pad];
   }
   var pad = (max - min) * 0.05;
-  return [Math.max(0, min - pad), max + pad];
+  var mode = TaxChart.state.mode;
+  var isScatter = (mode === 'scatter' || mode === 'trails');
+  return [isScatter ? min - pad : Math.max(0, min - pad), max + pad];
 };
 
 // Round up to the next "nice" number (1, 2, 5 × 10^n) for axis ticks
@@ -579,6 +580,41 @@ TaxChart.applyHighlight = function() {
     // For scatter/line traces, update trace-level opacity
     for (var j = 0; j < el.data.length; j++) {
       Plotly.restyle(el, { opacity: opacities[j] }, [j]);
+    }
+  }
+};
+
+// Highlight a single company on the chart (enlarge marker, black outline).
+// Scatter and trails only. Pass null to clear.
+TaxChart.highlightCompany = function(companyName) {
+  var el = document.getElementById('taxchart-plot');
+  if (!el || !el.data) return;
+  var mode = TaxChart.state.mode;
+  if (mode !== 'scatter' && mode !== 'trails') return;
+
+  for (var i = 0; i < el.data.length; i++) {
+    var trace = el.data[i];
+    if (companyName && trace.name === companyName && !trace._hlActive) {
+      trace._hlActive = true;
+      if (mode === 'trails') {
+        Plotly.restyle(el, { 'line.width': 5 }, [i]);
+      } else {
+        Plotly.restyle(el, {
+          'marker.size': 18,
+          'marker.line.width': 2,
+          'marker.line.color': '#000'
+        }, [i]);
+      }
+    } else if (!companyName && trace._hlActive) {
+      if (mode === 'trails') {
+        Plotly.restyle(el, { 'line.width': null }, [i]);
+      } else {
+        Plotly.restyle(el, {
+          'marker.size': 10,
+          'marker.line.width': 0
+        }, [i]);
+      }
+      delete trace._hlActive;
     }
   }
 };
