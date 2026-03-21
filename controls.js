@@ -130,7 +130,14 @@ TaxChart.computeAxisRanges = function() {
 };
 
 // Apply ASX Listed and Top N filters to allRows, rebuild rows/metadata/sectorRows.
-// Top N ranks companies by Total Income in the latest financial year.
+// Top N ranks companies by max Total Income over the last 5 financial years.
+// Why max-over-5-years instead of latest year only:
+//   - ~8% of the top 200 differ between the two methods
+//   - Latest-year misses companies having a bad year or missing data (e.g. restructured entities)
+//   - Max-over-5-years retains companies like Sandfire Resources ($972M peak) and Coronado ($1.2B peak)
+//     that report $0 in the latest year due to entity changes
+//   - Fast growers still appear since their latest year IS their max
+//   - Average-over-5-years was considered but penalises companies that only recently grew large
 TaxChart.applyDataFilters = function() {
   var allRows = TaxChart.state.allRows;
   var filtered = allRows;
@@ -140,20 +147,23 @@ TaxChart.applyDataFilters = function() {
     filtered = filtered.filter(function(r) { return r['ASX Listed']; });
   }
 
-  // Top N filter: rank by Total Income in latest year, keep top N company names
+  // Top N filter: rank by max Total Income over last 5 years, keep top N company names
   if (TaxChart.state.topN > 0) {
     var years = [];
     filtered.forEach(function(r) {
       if (years.indexOf(r['Financial Year']) === -1) years.push(r['Financial Year']);
     });
     years.sort();
-    var latestYear = years[years.length - 1];
+    var last5 = years.slice(-5);
 
-    // Build company → latest year total income
+    // Build company → max total income over last 5 years
     var companyIncome = {};
     filtered.forEach(function(r) {
-      if (r['Financial Year'] === latestYear && r['Total Income'] !== null) {
-        companyIncome[r['Company']] = r['Total Income'];
+      if (last5.indexOf(r['Financial Year']) !== -1 && r['Total Income'] !== null) {
+        var c = r['Company'];
+        if (companyIncome[c] === undefined || r['Total Income'] > companyIncome[c]) {
+          companyIncome[c] = r['Total Income'];
+        }
       }
     });
 
